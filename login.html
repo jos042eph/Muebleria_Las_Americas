@@ -1,54 +1,138 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <meta charset="UTF-8">
-    <title>Login - Mueblería Las Américas</title>
-    <link rel="stylesheet" href="style.css">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Login - Mueblería Las Américas</title>
+  <link rel="stylesheet" href="style.css" />
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #ffeef5;
+      padding: 20px;
+      text-align: center;
+    }
+
+    h1 {
+      color: #D81B60;
+      margin-bottom: 30px;
+    }
+
+    form {
+      display: inline-block;
+      background: white;
+      padding: 20px;
+      border-radius: 12px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    }
+
+    label, input {
+      display: block;
+      margin: 10px auto;
+      width: 80%;
+      font-size: 16px;
+    }
+
+    input {
+      padding: 10px;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+    }
+
+    button {
+      background-color: #D81B60;
+      color: white;
+      padding: 10px 20px;
+      border: none;
+      font-size: 16px;
+      cursor: pointer;
+      border-radius: 6px;
+      margin-top: 10px;
+    }
+
+    button:hover {
+      background-color: #c2185b;
+    }
+
+    #mensajeLogin {
+      margin-top: 15px;
+      font-weight: bold;
+    }
+
+    nav {
+      margin-bottom: 20px;
+    }
+
+    nav a {
+      margin: 0 10px;
+      color: #D81B60;
+      text-decoration: none;
+      font-weight: bold;
+    }
+  </style>
 </head>
 <body>
-<header>
-    <h1>Mueblería Las Américas</h1>
+  <header>
+    <h1>Iniciar Sesión</h1>
     <nav>
-        <ul>
-            <li><a href="index.html">Inicio</a></li>
-            <li><a href="catalogo.html">Catálogo</a></li>
-            <li><a href="empresa.html">Empresa</a></li>
-            <li><a href="login.html">Login</a></li>
-            <li><a href="categorias.html">Categorías</a></li>
-            <li><a href="inventario.html">Inventario</a></li>
-            <li><a href="agregar.html">Agregar Producto</a></li>
-        </ul>
+      <a href="index.html">Inicio</a>
+      <a href="catalogo.html">Catálogo</a>
+      <a href="empresa.html">Empresa</a>
+      <a href="login.html">Login</a>
+      <a href="categorias.html">Categorías</a>
+      <a href="inventario.html">Inventario</a>
+      <a href="agregar.html">Agregar Producto</a>
     </nav>
-</header>
-<main>
-    <h2>Iniciar sesión</h2>
-    <form>
-        <label for="user">Usuario:</label><br>
-        <input type="text" id="user" name="user"><br><br>
-        <label for="pass">Contraseña:</label><br>
-        <input type="password" id="pass" name="pass"><br><br>
-        <button type="submit">Entrar</button>
-    </form>
-</main>
-<footer>
-    <p>&copy; 2025 Mueblería Las Américas</p>
-</footer>
-</body>
-    <script>
-  const esAdmin = localStorage.getItem("rol") === "admin";
+  </header>
 
-  document.addEventListener("DOMContentLoaded", () => {
-    if (!esAdmin) {
-      const links = document.querySelectorAll("nav ul li");
-      links.forEach(li => {
-        const texto = li.textContent.trim().toLowerCase();
-        if (texto.includes("agregar producto") || texto.includes("inventario")) {
-          li.style.display = "none";
-        }
-      });
-    }
-  });
-</script>
+  <form id="formLogin">
+    <label for="usuario">Usuario:</label>
+    <input type="text" id="usuario" required />
+
+    <label for="clave">Contraseña:</label>
+    <input type="password" id="clave" required />
+
+    <button type="submit">Iniciar sesión</button>
+  </form>
+
+  <p id="mensajeLogin"></p>
+
+  <script>
+    document.getElementById("formLogin").addEventListener("submit", function (e) {
+      e.preventDefault();
+
+      const usuario = document.getElementById("usuario").value.trim();
+      const clave = document.getElementById("clave").value.trim();
+
+      if (usuario === "Admin" && clave === "1234") {
+        localStorage.setItem("rol", "admin");
+        document.getElementById("mensajeLogin").textContent = "Bienvenido, administrador.";
+      } else {
+        localStorage.setItem("rol", "usuario");
+        document.getElementById("mensajeLogin").textContent = "Sesión iniciada como usuario.";
+      }
+
+      setTimeout(() => {
+        window.location.href = "index.html"; // Redirigir al inicio
+      }, 1000);
+    });
+  </script>
+
+  <script>
+    // Código para ocultar botones si no es admin
+    const esAdmin = localStorage.getItem("rol") === "admin";
+
+    document.addEventListener("DOMContentLoaded", () => {
+      if (!esAdmin) {
+        const links = document.querySelectorAll("nav ul li");
+        links.forEach(li => {
+          const texto = li.textContent.trim().toLowerCase();
+          if (texto.includes("agregar producto") || texto.includes("inventario")) {
+            li.style.display = "none";
+          }
+        });
+      }
+    });
+  </script>
 </body>
-</html>
 </html>
