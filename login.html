@@ -34,4 +34,21 @@
     <p>&copy; 2025 Mueblería Las Américas</p>
 </footer>
 </body>
+    <script>
+  const esAdmin = localStorage.getItem("rol") === "admin";
+
+  document.addEventListener("DOMContentLoaded", () => {
+    if (!esAdmin) {
+      const links = document.querySelectorAll("nav ul li");
+      links.forEach(li => {
+        const texto = li.textContent.trim().toLowerCase();
+        if (texto.includes("agregar producto") || texto.includes("inventario")) {
+          li.style.display = "none";
+        }
+      });
+    }
+  });
+</script>
+</body>
+</html>
 </html>
