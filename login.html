@@ -85,50 +85,57 @@
     </nav>
   </header>
 
-  <form id="formLogin">
+  <form id="loginForm">
     <label for="usuario">Usuario:</label>
     <input type="text" id="usuario" required />
 
-    <label for="clave">Contraseña:</label>
-    <input type="password" id="clave" required />
+    <label for="contrasena">Contraseña:</label>
+    <input type="password" id="contrasena" required />
 
     <button type="submit">Iniciar sesión</button>
   </form>
 
   <p id="mensajeLogin"></p>
 
+  <!-- SCRIPT para procesar el login y guardar usuario -->
   <script>
-    document.getElementById("formLogin").addEventListener("submit", function (e) {
+    document.getElementById("loginForm").addEventListener("submit", function (e) {
       e.preventDefault();
 
       const usuario = document.getElementById("usuario").value.trim();
-      const clave = document.getElementById("clave").value.trim();
+      const contrasena = document.getElementById("contrasena").value.trim();
 
-      if (usuario === "Admin" && clave === "1234") {
+      if (usuario === "admin" && contrasena === "1234") {
         localStorage.setItem("rol", "admin");
+        localStorage.setItem("usuario", usuario);
         document.getElementById("mensajeLogin").textContent = "Bienvenido, administrador.";
-      } else {
+      } else if (usuario !== "" && contrasena !== "") {
         localStorage.setItem("rol", "usuario");
+        localStorage.setItem("usuario", usuario);
         document.getElementById("mensajeLogin").textContent = "Sesión iniciada como usuario.";
+      } else {
+        alert("Datos inválidos.");
+        return;
       }
 
+      // Redirigir al inicio después de 1 segundo
       setTimeout(() => {
-        window.location.href = "index.html"; // Redirigir al inicio
+        window.location.href = "index.html";
       }, 1000);
     });
   </script>
 
+  <!-- SCRIPT para ocultar botones del menú si NO es admin -->
   <script>
-    // Código para ocultar botones si no es admin
     const esAdmin = localStorage.getItem("rol") === "admin";
 
     document.addEventListener("DOMContentLoaded", () => {
       if (!esAdmin) {
-        const links = document.querySelectorAll("nav ul li");
-        links.forEach(li => {
-          const texto = li.textContent.trim().toLowerCase();
+        const enlaces = document.querySelectorAll("nav a");
+        enlaces.forEach(link => {
+          const texto = link.textContent.trim().toLowerCase();
           if (texto.includes("agregar producto") || texto.includes("inventario")) {
-            li.style.display = "none";
+            link.style.display = "none";
           }
         });
       }
@@ -136,3 +143,4 @@
   </script>
 </body>
 </html>
+
