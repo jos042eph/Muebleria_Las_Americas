@@ -4,41 +4,105 @@ body {
     background-color: #f9f9f9;
     color: #333;
 }
+
 header {
     background-color: #D81B60;
     color: white;
     padding: 1em;
     text-align: center;
 }
+
 nav ul {
     list-style: none;
     padding: 0;
+    margin: 0;
     display: flex;
     flex-wrap: wrap;
     justify-content: center;
 }
+
 nav ul li {
     margin: 0.5em;
 }
+
 nav ul li a {
     color: white;
     text-decoration: none;
     font-weight: bold;
+    font-size: 1rem;
 }
+
+nav ul li a:hover {
+    text-decoration: underline;
+}
+
 .hero {
-    padding: 2em;
+    padding: 2em 1em;
     text-align: center;
 }
+
 .hero i {
     margin-top: 1em;
+    color: #D81B60;
+    font-size: 4rem;
 }
+
+main {
+    padding: 1em;
+    text-align: center;
+}
+
+form {
+    max-width: 400px;
+    margin: auto;
+    padding: 1em;
+}
+
+input, button {
+    width: 100%;
+    padding: 0.6em;
+    margin: 0.5em 0;
+    box-sizing: border-box;
+    font-size: 1rem;
+}
+
+button {
+    background-color: #D81B60;
+    color: white;
+    border: none;
+    font-weight: bold;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+button:hover {
+    background-color: #b3154c;
+}
+
 footer {
     background-color: #D81B60;
     color: white;
     text-align: center;
     padding: 1em;
-    position: relative;
-    bottom: 0;
-    width: 100%;
+    margin-top: 2em;
 }
 
+/* 🔁 RESPONSIVE: estilos móviles */
+@media (max-width: 768px) {
+    nav ul {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    nav ul li {
+        margin: 0.3em 0;
+    }
+
+    .hero i {
+        font-size: 3rem;
+    }
+
+    input, button {
+        font-size: 1rem;
+    }
+}
