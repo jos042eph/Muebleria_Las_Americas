@@ -118,18 +118,27 @@
             }
 
             if (modoRegistro) {
+                // No se puede registrar como admin
+                if (usuario === "Flor_Campos") {
+                    document.getElementById("mensaje").textContent = "Este usuario está reservado para administración.";
+                    return;
+                }
                 localStorage.setItem("usuario", usuario);
                 localStorage.setItem("contrasena", contrasena);
-                localStorage.setItem("rol", usuario === "admin" ? "admin" : "user");
+                localStorage.setItem("rol", "user");
                 document.getElementById("mensaje").textContent = "Registro exitoso. Ahora puedes iniciar sesión.";
                 alternarModo();
             } else {
+                const esAdmin = usuario === "Flor_Campos" && contrasena === "243205";
                 const usuarioGuardado = localStorage.getItem("usuario");
                 const contrasenaGuardada = localStorage.getItem("contrasena");
 
-                if (usuario === usuarioGuardado && contrasena === contrasenaGuardada) {
+                const esUsuarioValido = usuario === usuarioGuardado && contrasena === contrasenaGuardada;
+
+                if (esAdmin || esUsuarioValido) {
                     intentosFallidos = 0;
                     localStorage.setItem("nombreUsuario", usuario);
+                    localStorage.setItem("rol", esAdmin ? "admin" : "user");
                     window.location.href = "index.html";
                 } else {
                     intentosFallidos++;
