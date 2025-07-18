@@ -2,191 +2,153 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Inicio - Mueblería Las Américas</title>
-  <link rel="stylesheet" href="style.css" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Mueblería Las Américas</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
   <style>
-    :root {
-      --rosa-principal: #D81B60;
-      --rosa-footer: #f8bbd0;
-    }
-
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-    }
-
     body {
+      background-color: #ffe6f0;
+      margin: 0;
       font-family: Arial, sans-serif;
-      background-color: #fff0f5;
-      color: #333;
-      display: flex;
-      flex-direction: column;
-      min-height: 100vh;
     }
 
     header {
-      background-color: var(--rosa-principal);
+      background-color: #d91667;
       color: white;
       padding: 20px;
       text-align: center;
-      position: relative;
-    }
-
-    #usuarioSuperior {
-      position: absolute;
-      top: 10px;
-      left: 15px;
-      color: #ffffff;
+      font-size: 24px;
       font-weight: bold;
-      font-size: 14px;
     }
 
     nav {
-      background-color: #ffcde4;
-      display: flex;
-      justify-content: center;
-      flex-wrap: wrap;
+      background-color: pink;
+      padding: 10px;
+      text-align: center;
     }
 
-    nav ul {
-      list-style: none;
-      display: flex;
-      flex-wrap: wrap;
-      justify-content: center;
-      padding: 10px 0;
-    }
-
-    nav ul li {
-      margin: 10px;
-    }
-
-    nav ul li a {
+    nav a {
+      margin: 0 10px;
+      color: #d91667;
       text-decoration: none;
-      color: #D81B60;
       font-weight: bold;
     }
 
-    nav ul li a:hover {
+    nav a:hover {
       text-decoration: underline;
     }
 
-    #bienvenida {
-      padding: 40px 20px;
+    #usuarioActivo {
+      margin-left: 10px;
+      color: white;
+      font-weight: bold;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 5px 15px;
+    }
+
+    #cerrarSesion {
+      padding: 4px 10px;
+      background-color: #fff;
+      color: #d91667;
+      border: none;
+      border-radius: 4px;
+      font-size: 12px;
+      cursor: pointer;
+    }
+
+    main {
+      padding: 30px;
       text-align: center;
-      flex-grow: 1;
     }
 
     footer {
-      background-color: var(--rosa-footer);
+      background-color: #000;
+      color: white;
+      padding: 10px;
       text-align: center;
-      padding: 12px;
       font-size: 14px;
-      color: #000000;
     }
 
     @media screen and (max-width: 600px) {
-      nav ul {
-        flex-direction: column;
-      }
-
-      nav ul li {
+      nav a {
+        display: block;
         margin: 5px 0;
-      }
-
-      #bienvenida {
-        padding: 20px 10px;
       }
 
       header {
         font-size: 20px;
       }
 
-      #usuarioSuperior {
-        font-size: 14px;
+      main h2 {
+        font-size: 18px;
       }
     }
   </style>
 </head>
 <body>
+  <div id="usuarioActivo"></div>
+
   <header>
-    <div id="usuarioSuperior"></div>
-    <h1>Mueblería Las Américas</h1>
+    Mueblería Las Américas
   </header>
+
   <nav>
-    <ul>
-      <li><a href="index.html">Inicio</a></li>
-      <li><a href="catalogo.html">Catálogo</a></li>
-      <li><a href="empresa.html">Empresa</a></li>
-      <li><a href="login.html">Login</a></li>
-      <li><a href="categorias.html">Categorías</a></li>
-    </ul>
+    <a href="index.html">Inicio</a>
+    <a href="catalogo.html">Catálogo</a>
+    <a href="empresa.html">Empresa</a>
+    <a href="login.html">Login</a>
+    <a href="categorias.html">Categorías</a>
+    <a href="inventario.html">Inventario</a>
+    <a href="agregar.html">Agregar Producto</a>
   </nav>
-  <main id="bienvenida">
+
+  <main>
     <h2>¡Encuentra los mejores muebles para tu hogar!</h2>
     <p>Explorá nuestras categorías y apartá tus productos favoritos.</p>
   </main>
+
   <footer>
     © 2025 Mueblería Las Américas. Todos los derechos reservados.
   </footer>
 
   <script>
-    const usuario = localStorage.getItem("usuario");
-    if (usuario) {
-      const nombreDiv = document.getElementById("usuarioSuperior");
-      if (nombreDiv) {
-        nombreDiv.textContent = `👤 ${usuario}`;
-      }
-    }
-  </script>
-</body>
-</html>
-</script>
-</body>
-<script>
-// Verificar si hay sesión activa
-document.addEventListener("DOMContentLoaded", function () {
-    const usuario = localStorage.getItem("usuario");
-    const rol = localStorage.getItem("rol");
+    document.addEventListener("DOMContentLoaded", function () {
+      const usuario = localStorage.getItem("usuario");
+      const rol = localStorage.getItem("rol");
 
-    // Mostrar nombre de usuario si existe
-    if (usuario) {
-        const header = document.querySelector("header") || document.body;
-
-        const divUser = document.createElement("div");
-        divUser.id = "usuarioActivo";
-        divUser.style.marginLeft = "10px";
-        divUser.style.color = "white";
-        divUser.style.fontWeight = "bold";
+      // Evitar duplicar el bloque del usuario
+      if (usuario && !document.getElementById("usuarioActivoInner")) {
+        const divUser = document.getElementById("usuarioActivo");
+        divUser.id = "usuarioActivoInner"; // actualizamos el id para evitar repeticiones
         divUser.style.display = "flex";
         divUser.style.alignItems = "center";
-        divUser.innerHTML = `👤 ${usuario} 
-            <button id="cerrarSesion" style="margin-left: 10px; padding: 5px; font-size: 12px;">Cerrar sesión</button>`;
 
-        header.prepend(divUser);
+        divUser.innerHTML = `
+          👤 ${usuario}
+          <button id="cerrarSesion">Cerrar sesión</button>
+        `;
 
-        // Cerrar sesión
+        // Evento para cerrar sesión
         document.getElementById("cerrarSesion").addEventListener("click", () => {
-            localStorage.removeItem("usuario");
-            localStorage.removeItem("rol");
-            window.location.href = "login.html";
+          localStorage.removeItem("usuario");
+          localStorage.removeItem("rol");
+          window.location.href = "login.html";
         });
 
-        // Ocultar Agregar Producto e Inventario si no es admin
+        // Ocultar botones solo para usuario normal
         if (rol !== "admin") {
-            const links = document.querySelectorAll("nav a");
-            links.forEach(link => {
-                const texto = link.textContent.toLowerCase();
-                if (texto.includes("agregar producto") || texto.includes("inventario")) {
-                    link.style.display = "none";
-                }
-            });
+          const links = document.querySelectorAll("nav a");
+          links.forEach(link => {
+            const texto = link.textContent.toLowerCase();
+            if (texto.includes("agregar producto") || texto.includes("inventario")) {
+              link.style.display = "none";
+            }
+          });
         }
-    } else {
-        // Redirigir al login si no hay sesión (opcional)
-        // window.location.href = "login.html";
-    }
-});
-</script>
+      }
+    });
+  </script>
+</body>
 </html>
