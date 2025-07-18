@@ -3,79 +3,77 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Mueblería Las Américas - Inicio</title>
+  <title>Inicio - Mueblería Las Américas</title>
   <link rel="stylesheet" href="style.css" />
   <style>
     :root {
       --rosa-principal: #D81B60;
-      --rosa-claro: #ffc1e3;
-      --rosa-footer: #f8cadd;
+      --rosa-footer: #f8bbd0;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
     }
 
     body {
       font-family: Arial, sans-serif;
-      margin: 0;
-      padding: 0;
       background-color: #fff0f5;
+      color: #333;
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
     }
 
     header {
       background-color: var(--rosa-principal);
+      color: white;
       padding: 20px;
       text-align: center;
-      color: white;
-      position: relative;
-    }
-
-    #usuarioSuperior {
-      position: absolute;
-      left: 10px;
-      top: 10px;
-      font-weight: bold;
-      color: #ffffff;
-      font-size: 14px;
     }
 
     nav {
-      background-color: var(--rosa-claro);
-      padding: 10px;
-      text-align: center;
+      background-color: #ffcde4;
+      display: flex;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+
+    nav ul {
+      list-style: none;
       display: flex;
       flex-wrap: wrap;
       justify-content: center;
-      gap: 10px;
+      padding: 10px 0;
     }
 
-    nav a {
-      color: var(--rosa-principal);
+    nav ul li {
+      margin: 10px;
+    }
+
+    nav ul li a {
       text-decoration: none;
+      color: #D81B60;
       font-weight: bold;
-      font-size: 16px;
     }
 
-    nav a:hover {
+    nav ul li a:hover {
       text-decoration: underline;
     }
 
-    #bienvenidaUsuario {
-      margin: 15px 0;
+    #bienvenida {
+      padding: 40px 20px;
       text-align: center;
-      font-size: 18px;
-      color: var(--rosa-principal);
+      flex-grow: 1;
+    }
+
+    #nombreUsuario {
+      position: absolute;
+      top: 10px;
+      left: 15px;
+      color: #D81B60;
       font-weight: bold;
-    }
-
-    main {
-      padding: 20px;
-      text-align: center;
-    }
-
-    main h2 {
-      font-size: 22px;
-    }
-
-    main p {
-      font-size: 16px;
     }
 
     footer {
@@ -83,103 +81,60 @@
       text-align: center;
       padding: 12px;
       font-size: 14px;
+      color: #000000;
     }
 
-    /* Responsive para celular */
-    @media (max-width: 600px) {
-      header h1 {
-        font-size: 20px;
-      }
-
-      nav {
+    @media screen and (max-width: 600px) {
+      nav ul {
         flex-direction: column;
-        align-items: center;
       }
 
-      nav a {
-        display: block;
-        font-size: 18px;
+      nav ul li {
+        margin: 5px 0;
       }
 
-      #usuarioSuperior {
-        font-size: 12px;
-        top: 5px;
-        left: 10px;
+      #bienvenida {
+        padding: 20px 10px;
       }
 
-      #bienvenidaUsuario {
+      header {
         font-size: 20px;
       }
 
-      main h2 {
-        font-size: 20px;
-      }
-
-      main p {
-        font-size: 16px;
-      }
-
-      footer {
-        font-size: 13px;
+      #nombreUsuario {
+        font-size: 14px;
       }
     }
   </style>
 </head>
 <body>
+  <span id="nombreUsuario"></span>
   <header>
-    <div id="usuarioSuperior"></div>
-    <h1>Bienvenidos a Mueblería Las Américas</h1>
+    <h1>Mueblería Las Américas</h1>
   </header>
-
   <nav>
-    <a href="index.html">Inicio</a>
-    <a href="catalogo.html">Catálogo</a>
-    <a href="empresa.html">Empresa</a>
-    <a href="login.html">Login</a>
-    <a href="categorias.html">Categorías</a>
-    <a href="inventario.html">Inventario</a>
-    <a href="agregar.html">Agregar Producto</a>
+    <ul>
+      <li><a href="index.html">Inicio</a></li>
+      <li><a href="catalogo.html">Catálogo</a></li>
+      <li><a href="empresa.html">Empresa</a></li>
+      <li><a href="login.html">Login</a></li>
+      <li><a href="categorias.html">Categorías</a></li>
+    </ul>
   </nav>
-
-  <div id="bienvenidaUsuario"></div>
-
-  <main>
+  <main id="bienvenida">
     <h2>¡Encuentra los mejores muebles para tu hogar!</h2>
     <p>Explorá nuestras categorías y apartá tus productos favoritos.</p>
   </main>
-
   <footer>
-    <p>&copy; 2025 Mueblería Las Américas. Todos los derechos reservados.</p>
+    © 2025 Mueblería Las Américas. Todos los derechos reservados.
   </footer>
 
   <script>
-    document.addEventListener("DOMContentLoaded", () => {
-      const usuario = localStorage.getItem("usuario");
-
-      // Mensaje centrado
-      const bienvenida = document.getElementById("bienvenidaUsuario");
-      if (usuario && bienvenida) {
-        bienvenida.textContent = "Hola, " + usuario;
-      }
-
-      // Nombre arriba a la izquierda
-      const superior = document.getElementById("usuarioSuperior");
-      if (usuario && superior) {
-        superior.textContent = "👤 " + usuario;
-      }
-
-      // Ocultar enlaces si no es admin
-      const esAdmin = localStorage.getItem("rol") === "admin";
-      if (!esAdmin) {
-        const enlaces = document.querySelectorAll("nav a");
-        enlaces.forEach(link => {
-          const texto = link.textContent.trim().toLowerCase();
-          if (texto.includes("agregar producto") || texto.includes("inventario")) {
-            link.style.display = "none";
-          }
-        });
-      }
-    });
+    const usuario = localStorage.getItem("usuario");
+    if (usuario) {
+      const nombreSpan = document.getElementById("nombreUsuario");
+      nombreSpan.textContent = `Hola, ${usuario}`;
+    }
   </script>
 </body>
 </html>
