@@ -28,9 +28,19 @@
 
     header {
       background-color: var(--rosa-principal);
-      color: white;
+      color: pink;
       padding: 20px;
       text-align: center;
+      position: relative;
+    }
+
+    #usuarioSuperior {
+      position: absolute;
+      top: 10px;
+      left: 15px;
+      color: #ffffff;
+      font-weight: bold;
+      font-size: 14px;
     }
 
     nav {
@@ -68,14 +78,6 @@
       flex-grow: 1;
     }
 
-    #nombreUsuario {
-      position: absolute;
-      top: 10px;
-      left: 15px;
-      color: #D81B60;
-      font-weight: bold;
-    }
-
     footer {
       background-color: var(--rosa-footer);
       text-align: center;
@@ -101,15 +103,15 @@
         font-size: 20px;
       }
 
-      #nombreUsuario {
+      #usuarioSuperior {
         font-size: 14px;
       }
     }
   </style>
 </head>
 <body>
-  <span id="nombreUsuario"></span>
   <header>
+    <div id="usuarioSuperior"></div>
     <h1>Mueblería Las Américas</h1>
   </header>
   <nav>
@@ -132,8 +134,10 @@
   <script>
     const usuario = localStorage.getItem("usuario");
     if (usuario) {
-      const nombreSpan = document.getElementById("nombreUsuario");
-      nombreSpan.textContent = `Hola, ${usuario}`;
+      const nombreDiv = document.getElementById("usuarioSuperior");
+      if (nombreDiv) {
+        nombreDiv.textContent = `👤 ${usuario}`;
+      }
     }
   </script>
 </body>
