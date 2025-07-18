@@ -5,32 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
     <title>Agregar Producto - Mueblería Las Américas</title>
     <link rel="stylesheet" href="style.css" />
-    <script>
-      function agregarProducto(event) {
-        event.preventDefault(); // Evita recargar la página
-
-        // Obtener valores
-        const nombre = document.getElementById('nombre').value.trim();
-        const categoria = document.getElementById('categoria').value.trim();
-        const precio = document.getElementById('precio').value.trim();
-        const cantidad = document.getElementById('cantidad').value.trim();
-
-        if (!nombre || !categoria || !precio || !cantidad) {
-            alert("Por favor, completá todos los campos.");
-            return;
-        }
-
-        // Simulación de guardar (aquí podrías guardar en localStorage si quisieras)
-        alert("✅ Producto agregado correctamente:\n" +
-              "🛋️ Nombre: " + nombre + "\n" +
-              "📂 Categoría: " + categoria + "\n" +
-              "💵 Precio: " + precio + "\n" +
-              "📦 Cantidad: " + cantidad);
-
-        // Limpiar formulario
-        document.getElementById("formulario").reset();
-      }
-    </script>
 </head>
 <body>
     <header>
@@ -50,14 +24,43 @@
 
     <main>
         <h2>Formulario para agregar nuevo producto</h2>
-        <form id="formulario" onsubmit="agregarProducto(event)">
+        <form id="formulario">
             <label>Nombre del producto:<br><input type="text" id="nombre" required></label><br><br>
             <label>Categoría:<br><input type="text" id="categoria" required></label><br><br>
             <label>Precio:<br><input type="number" id="precio" required></label><br><br>
             <label>Cantidad:<br><input type="number" id="cantidad" required></label><br><br>
             <button type="submit">Agregar</button>
         </form>
+        <div id="mensaje" style="margin-top: 1em; font-weight: bold; color: green;"></div>
     </main>
+
+    <footer>
+        <p>&copy; 2025 Mueblería Las Américas</p>
+    </footer>
+
+    <script>
+        document.getElementById('formulario').addEventListener('submit', function (event) {
+            event.preventDefault();
+
+            const nombre = document.getElementById('nombre').value.trim();
+            const categoria = document.getElementById('categoria').value.trim();
+            const precio = document.getElementById('precio').value.trim();
+            const cantidad = document.getElementById('cantidad').value.trim();
+
+            if (!nombre || !categoria || !precio || !cantidad) {
+                alert("Por favor, completá todos los campos.");
+                return;
+            }
+
+            // Mostrar mensaje de éxito
+            document.getElementById('mensaje').textContent = "✅ Producto agregado correctamente.";
+
+            // Limpiar el formulario
+            document.getElementById('formulario').reset();
+        });
+    </script>
+</body>
+</html>
 
     <footer>
         <p>&copy; 2025 Mueblería Las Américas</p>
