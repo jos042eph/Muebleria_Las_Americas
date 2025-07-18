@@ -1,61 +1,83 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
     <title>Login - Mueblería Las Américas</title>
-    <link rel="stylesheet" href="style.css">
     <style>
         body {
             background-color: #ffe6f0;
             font-family: Arial, sans-serif;
             text-align: center;
             margin: 0;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
         }
+
         header {
             background-color: #D81B60;
+            color: white;
             padding: 20px;
+            font-size: 24px;
+            font-weight: bold;
         }
+
         .container {
-            margin-top: 40px;
+            flex: 1;
+            display: flex;
+            justify-content: center;
+            align-items: center;
         }
+
         .form-box {
             background-color: white;
-            display: inline-block;
             padding: 30px;
             border-radius: 10px;
             box-shadow: 0 0 10px rgba(0,0,0,0.2);
+            width: 90%;
+            max-width: 300px;
         }
+
         input {
-            display: block;
             width: 100%;
             margin: 10px 0;
             padding: 8px;
             font-size: 16px;
         }
+
         button {
             background-color: #D81B60;
             color: white;
-            padding: 10px 20px;
+            padding: 10px;
+            width: 100%;
             font-size: 16px;
             border: none;
-            margin-top: 10px;
             cursor: pointer;
         }
+
         .toggle {
             color: #D81B60;
             margin-top: 10px;
             cursor: pointer;
             font-weight: bold;
         }
+
         .error {
             color: red;
             margin-top: 10px;
         }
+
+        footer {
+            background-color: #000;
+            color: white;
+            padding: 10px;
+            font-size: 14px;
+        }
     </style>
 </head>
 <body>
-    <header></header>
+    <header>Mueblería Las Américas</header>
 
     <div class="container">
         <div class="form-box">
@@ -67,6 +89,10 @@
             <p id="mensaje" class="error"></p>
         </div>
     </div>
+
+    <footer>
+        © 2025 Mueblería Las Américas. Todos los derechos reservados.
+    </footer>
 
     <script>
         let modoRegistro = false;
@@ -118,7 +144,3 @@
     </script>
 </body>
 </html>
-  </script>
-</body>
-</html>
-
