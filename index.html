@@ -1,55 +1,110 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Mueblería Las Américas</title>
-    <link rel="stylesheet" href="style.css" />
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Mueblería Las Américas - Inicio</title>
+  <link rel="stylesheet" href="style.css" />
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      background-color: #fff0f5;
+    }
+
+    header {
+      background-color: #D81B60;
+      padding: 20px;
+      text-align: center;
+      color: white;
+    }
+
+    nav {
+      background-color: #ffc1e3;
+      padding: 10px;
+      text-align: center;
+    }
+
+    nav a {
+      margin: 0 10px;
+      color: #D81B60;
+      text-decoration: none;
+      font-weight: bold;
+    }
+
+    nav a:hover {
+      text-decoration: underline;
+    }
+
+    #bienvenidaUsuario {
+      margin: 10px;
+      text-align: center;
+      font-weight: bold;
+      color: #D81B60;
+    }
+
+    main {
+      padding: 20px;
+      text-align: center;
+    }
+
+    footer {
+      background-color: #f8cadd;
+      text-align: center;
+      padding: 10px;
+      margin-top: 30px;
+    }
+  </style>
 </head>
 <body>
-    <header>
-        <h1>Mueblería Las Américas</h1>
-        <nav>
-            <ul>
-                <li><a href="index.html">Inicio</a></li>
-                <li><a href="catalogo.html">Catálogo</a></li>
-                <li><a href="empresa.html">Empresa</a></li>
-                <li><a href="login.html">Login</a></li>
-                <li><a href="categorias.html">Categorías</a></li>
-                <li><a href="inventario.html">Inventario</a></li>
-                <li><a href="agregar.html">Agregar Producto</a></li>
-            </ul>
-        </nav>
-    </header>
+  <header>
+    <h1>Bienvenidos a Mueblería Las Américas</h1>
+  </header>
 
-    <main>
-        <section class="hero">
-            <h2>Bienvenido a Mueblería Las Américas</h2>
-            <p>Calidad y estilo para tu hogar</p>
-            <i class="fas fa-couch fa-4x"></i>
-        </section>
-    </main>
+  <nav>
+    <a href="index.html">Inicio</a>
+    <a href="catalogo.html">Catálogo</a>
+    <a href="empresa.html">Empresa</a>
+    <a href="login.html">Login</a>
+    <a href="categorias.html">Categorías</a>
+    <a href="inventario.html">Inventario</a>
+    <a href="agregar.html">Agregar Producto</a>
+  </nav>
 
-    <footer>
-        <p>&copy; 2025 Mueblería Las Américas</p>
-    </footer>
+  <!-- Mostrar nombre del usuario -->
+  <div id="bienvenidaUsuario"></div>
+
+  <main>
+    <h2>¡Encuentra los mejores muebles para tu hogar!</h2>
+    <p>Explorá nuestras categorías y apartá tus productos favoritos.</p>
+  </main>
+
+  <footer>
+    <p>&copy; 2025 Mueblería Las Américas. Todos los derechos reservados.</p>
+  </footer>
+
+  <script>
+    document.addEventListener("DOMContentLoaded", () => {
+      // Mostrar el nombre del usuario
+      const usuario = localStorage.getItem("usuario");
+      const div = document.getElementById("bienvenidaUsuario");
+      if (usuario && div) {
+        div.textContent = "Hola, " + usuario;
+      }
+
+      // Ocultar enlaces si no es admin
+      const esAdmin = localStorage.getItem("rol") === "admin";
+      if (!esAdmin) {
+        const enlaces = document.querySelectorAll("nav a");
+        enlaces.forEach(link => {
+          const texto = link.textContent.trim().toLowerCase();
+          if (texto.includes("agregar producto") || texto.includes("inventario")) {
+            link.style.display = "none";
+          }
+        });
+      }
+    });
+  </script>
 </body>
-    <script>
-  const esAdmin = localStorage.getItem("rol") === "admin";
-
-  document.addEventListener("DOMContentLoaded", () => {
-    if (!esAdmin) {
-      const links = document.querySelectorAll("nav ul li");
-      links.forEach(li => {
-        const texto = li.textContent.trim().toLowerCase();
-        if (texto.includes("agregar producto") || texto.includes("inventario")) {
-          li.style.display = "none";
-        }
-      });
-    }
-  });
-</script>
-</body>
-</html>
 </html>
