@@ -1,145 +1,123 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Login - Mueblería Las Américas</title>
-  <link rel="stylesheet" href="style.css" />
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      background-color: #ffeef5;
-      padding: 20px;
-      text-align: center;
-    }
-
-    h1 {
-      color: #D81B60;
-      margin-bottom: 30px;
-    }
-
-    form {
-      display: inline-block;
-      background: white;
-      padding: 20px;
-      border-radius: 12px;
-      box-shadow: 0 0 10px rgba(0,0,0,0.1);
-    }
-
-    label, input {
-      display: block;
-      margin: 10px auto;
-      width: 80%;
-      font-size: 16px;
-    }
-
-    input {
-      padding: 10px;
-      border: 1px solid #ccc;
-      border-radius: 6px;
-    }
-
-    button {
-      background-color: #D81B60;
-      color: white;
-      padding: 10px 20px;
-      border: none;
-      font-size: 16px;
-      cursor: pointer;
-      border-radius: 6px;
-      margin-top: 10px;
-    }
-
-    button:hover {
-      background-color: #c2185b;
-    }
-
-    #mensajeLogin {
-      margin-top: 15px;
-      font-weight: bold;
-    }
-
-    nav {
-      margin-bottom: 20px;
-    }
-
-    nav a {
-      margin: 0 10px;
-      color: #D81B60;
-      text-decoration: none;
-      font-weight: bold;
-    }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - Mueblería Las Américas</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        body {
+            background-color: #ffe6f0;
+            font-family: Arial, sans-serif;
+            text-align: center;
+            margin: 0;
+        }
+        header {
+            background-color: #D81B60;
+            padding: 20px;
+        }
+        .container {
+            margin-top: 40px;
+        }
+        .form-box {
+            background-color: white;
+            display: inline-block;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.2);
+        }
+        input {
+            display: block;
+            width: 100%;
+            margin: 10px 0;
+            padding: 8px;
+            font-size: 16px;
+        }
+        button {
+            background-color: #D81B60;
+            color: white;
+            padding: 10px 20px;
+            font-size: 16px;
+            border: none;
+            margin-top: 10px;
+            cursor: pointer;
+        }
+        .toggle {
+            color: #D81B60;
+            margin-top: 10px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+        .error {
+            color: red;
+            margin-top: 10px;
+        }
+    </style>
 </head>
 <body>
-  <header>
-    <h1>Iniciar Sesión</h1>
-    <nav>
-      <a href="index.html">Inicio</a>
-      <a href="catalogo.html">Catálogo</a>
-      <a href="empresa.html">Empresa</a>
-      <a href="login.html">Login</a>
-      <a href="categorias.html">Categorías</a>
-      <a href="inventario.html">Inventario</a>
-      <a href="agregar.html">Agregar Producto</a>
-    </nav>
-  </header>
+    <header></header>
 
-  <form id="loginForm">
-    <label for="usuario">Usuario:</label>
-    <input type="text" id="usuario" required />
+    <div class="container">
+        <div class="form-box">
+            <h2 id="formTitle">Iniciar sesión</h2>
+            <input type="text" id="usuario" placeholder="Usuario">
+            <input type="password" id="contrasena" placeholder="Contraseña">
+            <button onclick="manejarLogin()">Iniciar sesión</button>
+            <p class="toggle" onclick="alternarModo()">¿No tienes cuenta? Regístrate</p>
+            <p id="mensaje" class="error"></p>
+        </div>
+    </div>
 
-    <label for="contrasena">Contraseña:</label>
-    <input type="password" id="contrasena" required />
+    <script>
+        let modoRegistro = false;
+        let intentosFallidos = 0;
 
-    <button type="submit">Iniciar sesión</button>
-  </form>
+        function alternarModo() {
+            modoRegistro = !modoRegistro;
+            document.getElementById("formTitle").textContent = modoRegistro ? "Registrarse" : "Iniciar sesión";
+            document.querySelector("button").textContent = modoRegistro ? "Registrarse" : "Iniciar sesión";
+            document.querySelector(".toggle").textContent = modoRegistro
+                ? "¿Ya tienes cuenta? Inicia sesión"
+                : "¿No tienes cuenta? Regístrate";
+            document.getElementById("mensaje").textContent = "";
+        }
 
-  <p id="mensajeLogin"></p>
+        function manejarLogin() {
+            const usuario = document.getElementById("usuario").value.trim();
+            const contrasena = document.getElementById("contrasena").value.trim();
 
-  <!-- SCRIPT para procesar el login y guardar usuario -->
-  <script>
-    document.getElementById("loginForm").addEventListener("submit", function (e) {
-      e.preventDefault();
+            if (!usuario || !contrasena) {
+                document.getElementById("mensaje").textContent = "Por favor, completa todos los campos.";
+                return;
+            }
 
-      const usuario = document.getElementById("usuario").value.trim();
-      const contrasena = document.getElementById("contrasena").value.trim();
+            if (modoRegistro) {
+                localStorage.setItem("usuario", usuario);
+                localStorage.setItem("contrasena", contrasena);
+                localStorage.setItem("rol", usuario === "admin" ? "admin" : "user");
+                document.getElementById("mensaje").textContent = "Registro exitoso. Ahora puedes iniciar sesión.";
+                alternarModo();
+            } else {
+                const usuarioGuardado = localStorage.getItem("usuario");
+                const contrasenaGuardada = localStorage.getItem("contrasena");
 
-      if (usuario === "admin" && contrasena === "1234") {
-        localStorage.setItem("rol", "admin");
-        localStorage.setItem("usuario", usuario);
-        document.getElementById("mensajeLogin").textContent = "Bienvenido, administrador.";
-      } else if (usuario !== "" && contrasena !== "") {
-        localStorage.setItem("rol", "usuario");
-        localStorage.setItem("usuario", usuario);
-        document.getElementById("mensajeLogin").textContent = "Sesión iniciada como usuario.";
-      } else {
-        alert("Datos inválidos.");
-        return;
-      }
-
-      // Redirigir al inicio después de 1 segundo
-      setTimeout(() => {
-        window.location.href = "index.html";
-      }, 1000);
-    });
-  </script>
-
-  <!-- SCRIPT para ocultar botones del menú si NO es admin -->
-  <script>
-    const esAdmin = localStorage.getItem("rol") === "admin";
-
-    document.addEventListener("DOMContentLoaded", () => {
-      if (!esAdmin) {
-        const enlaces = document.querySelectorAll("nav a");
-        enlaces.forEach(link => {
-          const texto = link.textContent.trim().toLowerCase();
-          if (texto.includes("agregar producto") || texto.includes("inventario")) {
-            link.style.display = "none";
-          }
-        });
-      }
-    });
+                if (usuario === usuarioGuardado && contrasena === contrasenaGuardada) {
+                    intentosFallidos = 0;
+                    localStorage.setItem("nombreUsuario", usuario);
+                    window.location.href = "index.html";
+                } else {
+                    intentosFallidos++;
+                    if (intentosFallidos >= 3) {
+                        document.getElementById("mensaje").textContent = "Espere un momento que pasó el límite de veces.";
+                    } else {
+                        document.getElementById("mensaje").textContent = "Usuario o contraseña incorrectos.";
+                    }
+                }
+            }
+        }
+    </script>
+</body>
+</html>
   </script>
 </body>
 </html>
