@@ -18,6 +18,16 @@
       padding: 20px;
       text-align: center;
       color: white;
+      position: relative;
+    }
+
+    #usuarioSuperior {
+      position: absolute;
+      left: 20px;
+      top: 20px;
+      font-weight: bold;
+      color: #ffffff;
+      font-size: 14px;
     }
 
     nav {
@@ -54,12 +64,12 @@
       background-color: #f8cadd;
       text-align: center;
       padding: 10px;
-      margin-top: 30px;
     }
   </style>
 </head>
 <body>
   <header>
+    <div id="usuarioSuperior"></div>
     <h1>Bienvenidos a Mueblería Las Américas</h1>
   </header>
 
@@ -73,7 +83,6 @@
     <a href="agregar.html">Agregar Producto</a>
   </nav>
 
-  <!-- Mensaje de bienvenida centrado -->
   <div id="bienvenidaUsuario"></div>
 
   <main>
@@ -87,11 +96,18 @@
 
   <script>
     document.addEventListener("DOMContentLoaded", () => {
-      // Mostrar el nombre del usuario
       const usuario = localStorage.getItem("usuario");
-      const div = document.getElementById("bienvenidaUsuario");
-      if (usuario && div) {
-        div.textContent = "Hola, " + usuario;
+
+      // Mensaje centrado
+      const bienvenida = document.getElementById("bienvenidaUsuario");
+      if (usuario && bienvenida) {
+        bienvenida.textContent = "Hola, " + usuario;
+      }
+
+      // Nombre arriba a la izquierda
+      const superior = document.getElementById("usuarioSuperior");
+      if (usuario && superior) {
+        superior.textContent = "👤 " + usuario;
       }
 
       // Ocultar enlaces si no es admin
@@ -109,4 +125,3 @@
   </script>
 </body>
 </html>
-
