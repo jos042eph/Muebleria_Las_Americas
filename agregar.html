@@ -1,6 +1,66 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <meta charset="UTF-8">
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
     <title>Agregar Producto - Mueblería Las Américas</title>
-    <link rel
+    <link rel="stylesheet" href="style.css" />
+    <script>
+      function agregarProducto(event) {
+        event.preventDefault(); // Evita recargar la página
+
+        // Obtener valores
+        const nombre = document.getElementById('nombre').value.trim();
+        const categoria = document.getElementById('categoria').value.trim();
+        const precio = document.getElementById('precio').value.trim();
+        const cantidad = document.getElementById('cantidad').value.trim();
+
+        if (!nombre || !categoria || !precio || !cantidad) {
+            alert("Por favor, completá todos los campos.");
+            return;
+        }
+
+        // Simulación de guardar (aquí podrías guardar en localStorage si quisieras)
+        alert("✅ Producto agregado correctamente:\n" +
+              "🛋️ Nombre: " + nombre + "\n" +
+              "📂 Categoría: " + categoria + "\n" +
+              "💵 Precio: " + precio + "\n" +
+              "📦 Cantidad: " + cantidad);
+
+        // Limpiar formulario
+        document.getElementById("formulario").reset();
+      }
+    </script>
+</head>
+<body>
+    <header>
+        <h1>Agregar Producto</h1>
+        <nav>
+            <ul>
+                <li><a href="index.html">Inicio</a></li>
+                <li><a href="catalogo.html">Catálogo</a></li>
+                <li><a href="empresa.html">Empresa</a></li>
+                <li><a href="login.html">Login</a></li>
+                <li><a href="categorias.html">Categorías</a></li>
+                <li><a href="inventario.html">Inventario</a></li>
+                <li><a href="agregar.html">Agregar Producto</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main>
+        <h2>Formulario para agregar nuevo producto</h2>
+        <form id="formulario" onsubmit="agregarProducto(event)">
+            <label>Nombre del producto:<br><input type="text" id="nombre" required></label><br><br>
+            <label>Categoría:<br><input type="text" id="categoria" required></label><br><br>
+            <label>Precio:<br><input type="number" id="precio" required></label><br><br>
+            <label>Cantidad:<br><input type="number" id="cantidad" required></label><br><br>
+            <button type="submit">Agregar</button>
+        </form>
+    </main>
+
+    <footer>
+        <p>&copy; 2025 Mueblería Las Américas</p>
+    </footer>
+</body>
+</html>
