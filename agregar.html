@@ -84,4 +84,49 @@
         <p>&copy; 2025 Mueblería Las Américas</p>
     </footer>
 </body>
+<script>
+// Verificar si hay sesión activa
+document.addEventListener("DOMContentLoaded", function () {
+    const usuario = localStorage.getItem("usuario");
+    const rol = localStorage.getItem("rol");
+
+    // Mostrar nombre de usuario si existe
+    if (usuario) {
+        const header = document.querySelector("header") || document.body;
+
+        const divUser = document.createElement("div");
+        divUser.id = "usuarioActivo";
+        divUser.style.marginLeft = "10px";
+        divUser.style.color = "white";
+        divUser.style.fontWeight = "bold";
+        divUser.style.display = "flex";
+        divUser.style.alignItems = "center";
+        divUser.innerHTML = `👤 ${usuario} 
+            <button id="cerrarSesion" style="margin-left: 10px; padding: 5px; font-size: 12px;">Cerrar sesión</button>`;
+
+        header.prepend(divUser);
+
+        // Cerrar sesión
+        document.getElementById("cerrarSesion").addEventListener("click", () => {
+            localStorage.removeItem("usuario");
+            localStorage.removeItem("rol");
+            window.location.href = "login.html";
+        });
+
+        // Ocultar Agregar Producto e Inventario si no es admin
+        if (rol !== "admin") {
+            const links = document.querySelectorAll("nav a");
+            links.forEach(link => {
+                const texto = link.textContent.toLowerCase();
+                if (texto.includes("agregar producto") || texto.includes("inventario")) {
+                    link.style.display = "none";
+                }
+            });
+        }
+    } else {
+        // Redirigir al login si no hay sesión (opcional)
+        // window.location.href = "login.html";
+    }
+});
+</script>
 </html>
