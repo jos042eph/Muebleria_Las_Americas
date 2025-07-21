@@ -1,132 +1,131 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-    <title>Agregar Producto - Mueblería Las Américas</title>
-    <link rel="stylesheet" href="style.css" />
-</head>    
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Agregar Producto</title>
+  <style>
+    body {
+      background-color: #ffe6f0;
+      font-family: sans-serif;
+      margin: 0;
+    }
+
+    header {
+      background-color: #d4145a;
+      color: white;
+      padding: 1em;
+      text-align: center;
+      font-size: 1.5em;
+    }
+
+    main {
+      padding: 20px;
+      max-width: 600px;
+      margin: auto;
+    }
+
+    input, textarea {
+      width: 100%;
+      padding: 10px;
+      margin: 10px 0;
+      font-size: 1em;
+    }
+
+    button {
+      background-color: #d4145a;
+      color: white;
+      padding: 10px 20px;
+      border: none;
+      font-size: 1em;
+      cursor: pointer;
+    }
+
+    img {
+      max-width: 100%;
+      margin-top: 10px;
+    }
+
+    #mensaje {
+      margin-top: 15px;
+      color: green;
+      font-weight: bold;
+    }
+  </style>
+</head>
 <body>
-    <header>
-        <h1>Agregar Producto</h1>
-        <nav>
-            <ul>
-                <li><a href="index.html">Inicio</a></li>
-                <li><a href="catalogo.html">Catálogo</a></li>
-                <li><a href="empresa.html">Empresa</a></li>
-                <li><a href="login.html">Login</a></li>
-                <li><a href="categorias.html">Categorías</a></li>
-                <li><a href="inventario.html">Inventario</a></li>
-                <li><a href="agregar.html">Agregar Producto</a></li>
-            </ul>
-        </nav>
-    </header>
+  <header>Mueblería Las Américas</header>
+  <main>
+    <h2>Agregar nuevo producto</h2>
+    <input type="text" id="nombre" placeholder="Nombre del producto" />
+    <textarea id="descripcion" placeholder="Descripción"></textarea>
+    <input type="number" id="precio" placeholder="Precio" />
+    <input type="file" id="imagen" />
+    <img id="preview" src="" alt="" style="display:none;" />
+    <button onclick="subirProducto()">Subir producto</button>
+    <div id="mensaje"></div>
+  </main>
 
-    <main>
-        <h2>Formulario para agregar nuevo producto</h2>
-        <form id="formulario">
-            <label>Nombre del producto:<br><input type="text" id="nombre" required></label><br><br>
-            <label>Categoría:<br><input type="text" id="categoria" required></label><br><br>
-            <label>Precio:<br><input type="number" id="precio" required></label><br><br>
-            <label>Cantidad:<br><input type="number" id="cantidad" required></label><br><br>
-            <button type="submit">Agregar</button>
-        </form>
-        <div id="mensaje" style="margin-top: 1em; font-weight: bold; color: green;"></div>
-    </main>
+  <!-- Firebase SDK -->
+  <script type="module">
+    // Firebase config
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.5.0/firebase-app.js";
+    import { getFirestore, collection, addDoc } from "https://www.gstatic.com/firebasejs/10.5.0/firebase-firestore.js";
+    import { getStorage, ref, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.5.0/firebase-storage.js";
 
-    <footer>
-        <p>&copy; 2025 Mueblería Las Américas</p>
-    </footer>
+    const firebaseConfig = {
+      apiKey: "AIzaSyABOdIq_2BN3NDoPtJUHXqf-OTu54bP0nE",
+      authDomain: "mueblerialasamericas-56e54.firebaseapp.com",
+      projectId: "mueblerialasamericas-56e54",
+      storageBucket: "mueblerialasamericas-56e54.appspot.com",
+      messagingSenderId: "893532279568",
+      appId: "1:893532279568:web:bb246d3637ffb5ea064b95"
+    };
 
-    <script>
-        document.getElementById('formulario').addEventListener('submit', function (event) {
-            event.preventDefault();
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+    const storage = getStorage(app);
 
-            const nombre = document.getElementById('nombre').value.trim();
-            const categoria = document.getElementById('categoria').value.trim();
-            const precio = document.getElementById('precio').value.trim();
-            const cantidad = document.getElementById('cantidad').value.trim();
+    document.getElementById("imagen").addEventListener("change", function (e) {
+      const file = e.target.files[0];
+      const reader = new FileReader();
+      reader.onload = function (event) {
+        const img = document.getElementById("preview");
+        img.src = event.target.result;
+        img.style.display = "block";
+      };
+      reader.readAsDataURL(file);
+    });
 
-            if (!nombre || !categoria || !precio || !cantidad) {
-                alert("Por favor, completá todos los campos.");
-                return;
-            }
+    async function subirProducto() {
+      const nombre = document.getElementById("nombre").value;
+      const descripcion = document.getElementById("descripcion").value;
+      const precio = document.getElementById("precio").value;
+      const archivo = document.getElementById("imagen").files[0];
 
-            // Mostrar mensaje de éxito
-            document.getElementById('mensaje').textContent = "✅ Producto agregado correctamente.";
+      if (!nombre || !descripcion || !precio || !archivo) {
+        document.getElementById("mensaje").textContent = "Por favor complete todos los campos.";
+        return;
+      }
 
-            // Limpiar el formulario
-            document.getElementById('formulario').reset();
-        });
-    </script>
-</body>
-<script>
-  const esAdmin = localStorage.getItem("rol") === "admin";
+      const storageRef = ref(storage, `productos/${archivo.name}`);
+      await uploadBytes(storageRef, archivo);
+      const url = await getDownloadURL(storageRef);
 
-  document.addEventListener("DOMContentLoaded", () => {
-    if (!esAdmin) {
-      const links = document.querySelectorAll("nav ul li");
-      links.forEach(li => {
-        const texto = li.textContent.trim().toLowerCase();
-        if (texto.includes("agregar producto") || texto.includes("inventario")) {
-          li.style.display = "none";
-        }
+      await addDoc(collection(db, "productos"), {
+        nombre,
+        descripcion,
+        precio: parseFloat(precio),
+        imagen: url
       });
+
+      document.getElementById("mensaje").textContent = "✅ Producto agregado correctamente.";
+      document.getElementById("nombre").value = "";
+      document.getElementById("descripcion").value = "";
+      document.getElementById("precio").value = "";
+      document.getElementById("imagen").value = "";
+      document.getElementById("preview").style.display = "none";
     }
-  });
-</script>
+  </script>
 </body>
-</html>
-
-</html>
-
-    <footer>
-        <p>&copy; 2025 Mueblería Las Américas</p>
-    </footer>
-</body>
-<script>
-// Verificar si hay sesión activa
-document.addEventListener("DOMContentLoaded", function () {
-    const usuario = localStorage.getItem("usuario");
-    const rol = localStorage.getItem("rol");
-
-    // Mostrar nombre de usuario si existe
-    if (usuario) {
-        const header = document.querySelector("header") || document.body;
-
-        const divUser = document.createElement("div");
-        divUser.id = "usuarioActivo";
-        divUser.style.marginLeft = "10px";
-        divUser.style.color = "white";
-        divUser.style.fontWeight = "bold";
-        divUser.style.display = "flex";
-        divUser.style.alignItems = "center";
-        divUser.innerHTML = `👤 ${usuario} 
-            <button id="cerrarSesion" style="margin-left: 10px; padding: 5px; font-size: 12px;">Cerrar sesión</button>`;
-
-        header.prepend(divUser);
-
-        // Cerrar sesión
-        document.getElementById("cerrarSesion").addEventListener("click", () => {
-            localStorage.removeItem("usuario");
-            localStorage.removeItem("rol");
-            window.location.href = "login.html";
-        });
-
-        // Ocultar Agregar Producto e Inventario si no es admin
-        if (rol !== "admin") {
-            const links = document.querySelectorAll("nav a");
-            links.forEach(link => {
-                const texto = link.textContent.toLowerCase();
-                if (texto.includes("agregar producto") || texto.includes("inventario")) {
-                    link.style.display = "none";
-                }
-            });
-        }
-    } else {
-        // Redirigir al login si no hay sesión (opcional)
-        // window.location.href = "login.html";
-    }
-});
-</script>
 </html>
