@@ -1,102 +1,81 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Agregar Producto - Mueblería Las Américas</title>
+  <meta charset="UTF-8">
+  <title>Agregar Producto</title>
+  <script type="module" src="firebase-config.js"></script>
   <style>
     body {
-      background-color: #ffe4ed;
-      font-family: Arial, sans-serif;
-      padding: 20px;
+      background-color: pink;
+      font-family: sans-serif;
       text-align: center;
+      padding: 50px;
     }
-
-    input[type="file"] {
-      margin-bottom: 15px;
-    }
-
     img {
       max-width: 300px;
-      display: block;
-      margin: 0 auto 20px;
-      border-radius: 10px;
+      margin-top: 20px;
     }
-
     button {
-      background-color: #d3155b;
+      background-color: deeppink;
       color: white;
-      padding: 10px 20px;
-      font-size: 16px;
       border: none;
-      border-radius: 8px;
+      padding: 10px 20px;
       cursor: pointer;
-    }
-
-    button:hover {
-      background-color: #b2124f;
+      margin-top: 15px;
     }
   </style>
 </head>
 <body>
-
   <h2>Agregar nuevo producto</h2>
+  <input type="file" id="fileInput"><br>
+  <img id="preview" src="" alt="Vista previa" style="display:none;">
+  <br>
+  <button id="subirBtn">Subir producto</button>
 
-  <input type="file" id="fileInput" accept="image/*" />
-  <img id="preview" src="" alt="Vista previa" />
-  <button id="uploadBtn">Subir producto</button>
-
-  <!-- Firebase SDKs -->
   <script type="module">
-    // Importar módulos desde CDN
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-app.js";
-    import { getStorage, ref, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-storage.js";
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-app.js";
+    import { getStorage, ref, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-storage.js";
 
-    // Configuración corregida de Firebase
     const firebaseConfig = {
-      apiKey: "AIzaSyABOdIq_2BN3NDoPtJUHXqf-OTu54bP0nE",
-      authDomain: "mueblerialasamericas-56e54.firebaseapp.com",
-      projectId: "mueblerialasamericas-56e54",
-      storageBucket: "mueblerialasamericas-56e54.appspot.com", // CORREGIDO AQUI
-      messagingSenderId: "893532279568",
-      appId: "1:893532279568:web:bb246d3637ffb5ea064b95"
+      apiKey: "AIzaSyAkY_O8fzNMr0ehvGhD7VI4HhG1O8uOn_g",
+      authDomain: "mueblerialasamericas-dea3c.firebaseapp.com",
+      projectId: "mueblerialasamericas-dea3c",
+      storageBucket: "mueblerialasamericas-dea3c.appspot.com",
+      messagingSenderId: "226678322678",
+      appId: "1:226678322678:web:d81a2483342bb2fdee03d7"
     };
 
-    // Inicializar Firebase
     const app = initializeApp(firebaseConfig);
     const storage = getStorage(app);
 
-    // Referencias
     const fileInput = document.getElementById('fileInput');
     const preview = document.getElementById('preview');
-    const uploadBtn = document.getElementById('uploadBtn');
+    const subirBtn = document.getElementById('subirBtn');
 
-    // Mostrar vista previa de imagen
     fileInput.addEventListener('change', () => {
       const file = fileInput.files[0];
       if (file) {
-        preview.src = URL.createObjectURL(file);
+        const reader = new FileReader();
+        reader.onload = e => {
+          preview.src = e.target.result;
+          preview.style.display = "block";
+        };
+        reader.readAsDataURL(file);
       }
     });
 
-    // Subir imagen a Firebase Storage
-    uploadBtn.addEventListener('click', async () => {
+    subirBtn.addEventListener('click', async () => {
       const file = fileInput.files[0];
-      if (!file) {
-        alert("Selecciona una imagen primero.");
-        return;
-      }
+      if (!file) return alert("Selecciona una imagen");
 
       const storageRef = ref(storage, 'productos/' + file.name);
-
       try {
         await uploadBytes(storageRef, file);
         const url = await getDownloadURL(storageRef);
-        alert("Producto subido correctamente.");
-        console.log("URL del producto:", url);
+        alert("Producto subido correctamente:\n" + url);
       } catch (error) {
-        console.error("Error al subir el producto:", error);
-        alert("Ocurrió un error al subir el producto.");
+        console.error(error);
+        alert("Error al subir la imagen");
       }
     });
   </script>
