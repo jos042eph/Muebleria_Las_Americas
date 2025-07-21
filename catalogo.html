@@ -1,93 +1,116 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <meta charset="UTF-8">
-    <title>Catálogo - Mueblería Las Américas</title>
-    <link rel="stylesheet" href="style.css">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Catálogo de productos</title>
+  <style>
+    body {
+      font-family: sans-serif;
+      background-color: #fff0f5;
+      margin: 0;
+    }
+
+    header {
+      background-color: #d4145a;
+      color: white;
+      padding: 1em;
+      text-align: center;
+      font-size: 1.5em;
+    }
+
+    main {
+      padding: 20px;
+      max-width: 1200px;
+      margin: auto;
+    }
+
+    h2 {
+      text-align: center;
+      margin-bottom: 30px;
+    }
+
+    .productos {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 20px;
+      justify-content: center;
+    }
+
+    .producto {
+      background: white;
+      border-radius: 8px;
+      box-shadow: 0 0 10px #ccc;
+      width: 280px;
+      padding: 15px;
+      text-align: center;
+    }
+
+    .producto img {
+      max-width: 100%;
+      height: 200px;
+      object-fit: cover;
+      border-radius: 5px;
+    }
+
+    .producto h3 {
+      margin: 10px 0 5px;
+      font-size: 1.2em;
+    }
+
+    .producto p {
+      margin: 5px 0;
+    }
+  </style>
 </head>
 <body>
-<header>
-    <h1>Mueblería Las Américas</h1>
-    <nav>
-        <ul>
-            <li><a href="index.html">Inicio</a></li>
-            <li><a href="catalogo.html">Catálogo</a></li>
-            <li><a href="empresa.html">Empresa</a></li>
-            <li><a href="login.html">Login</a></li>
-            <li><a href="categorias.html">Categorías</a></li>
-            <li><a href="inventario.html">Inventario</a></li>
-            <li><a href="agregar.html">Agregar Producto</a></li>
-        </ul>
-    </nav>
-</header>
-<main>
+  <header>Mueblería Las Américas</header>
+  <main>
     <h2>Catálogo de productos</h2>
-    <p>Aquí se mostrarán los productos disponibles.</p>
-</main>
-<footer>
-    <p>&copy; 2025 Mueblería Las Américas</p>
-</footer>
-</body>
-    <script>
-  const esAdmin = localStorage.getItem("rol") === "admin";
+    <div class="productos" id="lista-productos">
+      <!-- Aquí se cargan los productos automáticamente -->
+    </div>
+  </main>
 
-  document.addEventListener("DOMContentLoaded", () => {
-    if (!esAdmin) {
-      const links = document.querySelectorAll("nav ul li");
-      links.forEach(li => {
-        const texto = li.textContent.trim().toLowerCase();
-        if (texto.includes("agregar producto") || texto.includes("inventario")) {
-          li.style.display = "none";
-        }
+  <!-- Firebase SDK -->
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.5.0/firebase-app.js";
+    import { getFirestore, collection, getDocs } from "https://www.gstatic.com/firebasejs/10.5.0/firebase-firestore.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyABOdIq_2BN3NDoPtJUHXqf-OTu54bP0nE",
+      authDomain: "mueblerialasamericas-56e54.firebaseapp.com",
+      projectId: "mueblerialasamericas-56e54",
+      storageBucket: "mueblerialasamericas-56e54.appspot.com",
+      messagingSenderId: "893532279568",
+      appId: "1:893532279568:web:bb246d3637ffb5ea064b95"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+
+    async function cargarProductos() {
+      const contenedor = document.getElementById("lista-productos");
+      const querySnapshot = await getDocs(collection(db, "productos"));
+
+      querySnapshot.forEach((doc) => {
+        const producto = doc.data();
+
+        const div = document.createElement("div");
+        div.classList.add("producto");
+
+        div.innerHTML = `
+          <img src="${producto.imagen}" alt="${producto.nombre}" />
+          <h3>${producto.nombre}</h3>
+          <p><strong>₡${producto.precio.toFixed(2)}</strong></p>
+          <p>${producto.descripcion}</p>
+        `;
+
+        contenedor.appendChild(div);
       });
     }
-  });
-</script>
+
+    cargarProductos();
+  </script>
 </body>
-    <script>
-// Verificar si hay sesión activa
-document.addEventListener("DOMContentLoaded", function () {
-    const usuario = localStorage.getItem("usuario");
-    const rol = localStorage.getItem("rol");
-
-    // Mostrar nombre de usuario si existe
-    if (usuario) {
-        const header = document.querySelector("header") || document.body;
-
-        const divUser = document.createElement("div");
-        divUser.id = "usuarioActivo";
-        divUser.style.marginLeft = "10px";
-        divUser.style.color = "white";
-        divUser.style.fontWeight = "bold";
-        divUser.style.display = "flex";
-        divUser.style.alignItems = "center";
-        divUser.innerHTML = `👤 ${usuario} 
-            <button id="cerrarSesion" style="margin-left: 10px; padding: 5px; font-size: 12px;">Cerrar sesión</button>`;
-
-        header.prepend(divUser);
-
-        // Cerrar sesión
-        document.getElementById("cerrarSesion").addEventListener("click", () => {
-            localStorage.removeItem("usuario");
-            localStorage.removeItem("rol");
-            window.location.href = "login.html";
-        });
-
-        // Ocultar Agregar Producto e Inventario si no es admin
-        if (rol !== "admin") {
-            const links = document.querySelectorAll("nav a");
-            links.forEach(link => {
-                const texto = link.textContent.toLowerCase();
-                if (texto.includes("agregar producto") || texto.includes("inventario")) {
-                    link.style.display = "none";
-                }
-            });
-        }
-    } else {
-        // Redirigir al login si no hay sesión (opcional)
-        // window.location.href = "login.html";
-    }
-});
-</script>
-</html>
 </html>
