@@ -61,6 +61,21 @@
     .producto p {
       margin: 5px 0;
     }
+
+    .producto button {
+      margin-top: 10px;
+      padding: 10px;
+      background-color: #25d366;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    .producto button:hover {
+      background-color: #1ebe5b;
+    }
   </style>
 </head>
 <body>
@@ -89,6 +104,8 @@
     const app = initializeApp(firebaseConfig);
     const db = getFirestore(app);
 
+    const numeroWhatsApp = "50688523176"; // Número real integrado
+
     async function cargarProductos() {
       const contenedor = document.getElementById("lista-productos");
       const querySnapshot = await getDocs(collection(db, "productos"));
@@ -104,10 +121,16 @@
           <h3>${producto.nombre}</h3>
           <p><strong>₡${producto.precio.toFixed(2)}</strong></p>
           <p>${producto.descripcion}</p>
+          <button onclick="apartarProducto('${producto.nombre}', ${producto.precio})">Apartar por WhatsApp</button>
         `;
 
         contenedor.appendChild(div);
       });
+    }
+
+    window.apartarProducto = function(nombre, precio) {
+      const mensaje = encodeURIComponent(`Hola, estoy interesado en apartar el producto: ${nombre} con precio ₡${precio}`);
+      window.open(`https://wa.me/${numeroWhatsApp}?text=${mensaje}`, '_blank');
     }
 
     cargarProductos();
