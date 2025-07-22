@@ -3,7 +3,6 @@
 <head>
   <meta charset="UTF-8">
   <title>Agregar Producto</title>
-  <script type="module" src="firebase-config.js"></script>
   <style>
     body {
       background-color: pink;
@@ -33,21 +32,10 @@
   <button id="subirBtn">Subir producto</button>
 
   <script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-app.js";
+    import { app } from './firebase-config.js';
     import { getStorage, ref, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-storage.js";
 
-    const firebaseConfig = {
-      apiKey: "AIzaSyAkY_O8fzNMr0ehvGhD7VI4HhG1O8uOn_g",
-      authDomain: "mueblerialasamericas-dea3c.firebaseapp.com",
-      projectId: "mueblerialasamericas-dea3c",
-      storageBucket: "mueblerialasamericas-dea3c.appspot.com",
-      messagingSenderId: "226678322678",
-      appId: "1:226678322678:web:d81a2483342bb2fdee03d7"
-    };
-
-    const app = initializeApp(firebaseConfig);
     const storage = getStorage(app);
-
     const fileInput = document.getElementById('fileInput');
     const preview = document.getElementById('preview');
     const subirBtn = document.getElementById('subirBtn');
@@ -72,10 +60,10 @@
       try {
         await uploadBytes(storageRef, file);
         const url = await getDownloadURL(storageRef);
-        alert("Producto subido correctamente:\n" + url);
+        alert("✅ Producto subido correctamente:\n" + url);
       } catch (error) {
-        console.error(error);
-        alert("Error al subir la imagen");
+        console.error("Error al subir imagen:", error);
+        alert("❌ Error al subir la imagen");
       }
     });
   </script>
