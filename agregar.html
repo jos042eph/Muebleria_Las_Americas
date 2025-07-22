@@ -2,70 +2,105 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8">
-  <title>Agregar Producto</title>
+  <title>Agregar nuevo producto</title>
   <style>
     body {
       background-color: pink;
-      font-family: sans-serif;
+      font-family: Arial, sans-serif;
       text-align: center;
-      padding: 50px;
+      padding-top: 50px;
     }
-    img {
-      max-width: 300px;
-      margin-top: 20px;
+
+    h2 {
+      margin-bottom: 20px;
     }
+
+    input[type="file"] {
+      margin-bottom: 20px;
+    }
+
+    #preview {
+      display: none;
+      width: 250px;
+      margin-bottom: 20px;
+    }
+
     button {
       background-color: deeppink;
       color: white;
       border: none;
       padding: 10px 20px;
       cursor: pointer;
-      margin-top: 15px;
+      font-weight: bold;
+    }
+
+    button:hover {
+      background-color: hotpink;
     }
   </style>
 </head>
 <body>
+
   <h2>Agregar nuevo producto</h2>
-  <input type="file" id="fileInput"><br>
-  <img id="preview" src="" alt="Vista previa" style="display:none;">
+
+  <input type="file" id="fileInput">
+  <br>
+  <img id="preview" src="#" alt="Vista previa">
   <br>
   <button id="subirBtn">Subir producto</button>
 
   <script type="module">
-    import { app } from './firebase-config.js';
-    import { getStorage, ref, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-storage.js";
+    // Firebase imports
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+    import { getStorage, ref, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-storage.js";
 
+    // Configuración de Firebase
+    const firebaseConfig = {
+      apiKey: "AIzaSyAkY_O8fzNMr0ehvGhD7VI4HhG1O8uOn_g",
+      authDomain: "mueblerialasamericas-dea3c.firebaseapp.com",
+      projectId: "mueblerialasamericas-dea3c",
+      storageBucket: "mueblerialasamericas-dea3c.appspot.com",
+      messagingSenderId: "226678322678",
+      appId: "1:226678322678:web:d81a2483342bb2fdee03d7"
+    };
+
+    // Inicializar Firebase
+    const app = initializeApp(firebaseConfig);
     const storage = getStorage(app);
-    const fileInput = document.getElementById('fileInput');
-    const preview = document.getElementById('preview');
-    const subirBtn = document.getElementById('subirBtn');
 
-    fileInput.addEventListener('change', () => {
-      const file = fileInput.files[0];
+    const fileInput = document.getElementById("fileInput");
+    const subirBtn = document.getElementById("subirBtn");
+    const preview = document.getElementById("preview");
+
+    // Vista previa de imagen
+    fileInput.addEventListener("change", (e) => {
+      const file = e.target.files[0];
       if (file) {
-        const reader = new FileReader();
-        reader.onload = e => {
-          preview.src = e.target.result;
-          preview.style.display = "block";
-        };
-        reader.readAsDataURL(file);
+        preview.src = URL.createObjectURL(file);
+        preview.style.display = "block";
       }
     });
 
-    subirBtn.addEventListener('click', async () => {
+    // Subir archivo a Firebase
+    subirBtn.addEventListener("click", async () => {
       const file = fileInput.files[0];
-      if (!file) return alert("Selecciona una imagen");
+      if (!file) {
+        alert("Selecciona una imagen primero.");
+        return;
+      }
 
-      const storageRef = ref(storage, 'productos/' + file.name);
       try {
-        await uploadBytes(storageRef, file);
-        const url = await getDownloadURL(storageRef);
-        alert("✅ Producto subido correctamente:\n" + url);
+        const storageRef = ref(storage, 'productos/' + file.name);
+        const snapshot = await uploadBytes(storageRef, file);
+        const url = await getDownloadURL(snapshot.ref);
+        alert("✅ Imagen subida exitosamente.\nURL:\n" + url);
+        console.log("URL:", url);
       } catch (error) {
-        console.error("Error al subir imagen:", error);
-        alert("❌ Error al subir la imagen");
+        console.error("❌ Error al subir la imagen:", error);
+        alert("Hubo un error al subir la imagen.");
       }
     });
   </script>
+
 </body>
 </html>
