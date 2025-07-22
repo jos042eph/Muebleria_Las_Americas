@@ -1,19 +1,15 @@
-// js/firebase-config.js
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-import { getStorage } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-storage.js";
-import { getFirestore } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+// firebase-config.js
+import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-app.js";
 
 const firebaseConfig = {
-  apiKey: "TU_API_KEY",
-  authDomain: "TU_AUTH_DOMAIN",
-  projectId: "TU_PROJECT_ID",
-  storageBucket: "TU_STORAGE_BUCKET",
-  messagingSenderId: "TU_SENDER_ID",
-  appId: "TU_APP_ID"
+  apiKey: "AIzaSyAkY_O8fzNMr0ehvGhD7VI4HhG1O8uOn_g",
+  authDomain: "mueblerialasamericas-dea3c.firebaseapp.com",
+  projectId: "mueblerialasamericas-dea3c",
+  storageBucket: "mueblerialasamericas-dea3c.appspot.com",
+  messagingSenderId: "226678322678",
+  appId: "1:226678322678:web:d81a2483342bb2fdee03d7"
 };
 
 const app = initializeApp(firebaseConfig);
-const storage = getStorage(app);
-const db = getFirestore(app);
 
-export { app, storage, db };
+export { app };
