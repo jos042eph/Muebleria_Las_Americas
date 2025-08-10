@@ -1,155 +1,95 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-    <title>Login - Mueblería Las Américas</title>
-    <style>
-        body {
-            background-color: #ffe6f0;
-            font-family: Arial, sans-serif;
-            text-align: center;
-            margin: 0;
-            min-height: 100vh;
-            display: flex;
-            flex-direction: column;
-        }
-
-        header {
-            background-color: #D81B60;
-            color: white;
-            padding: 20px;
-            font-size: 24px;
-            font-weight: bold;
-        }
-
-        .container {
-            flex: 1;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-        }
-
-        .form-box {
-            background-color: white;
-            padding: 30px;
-            border-radius: 10px;
-            box-shadow: 0 0 10px rgba(0,0,0,0.2);
-            width: 90%;
-            max-width: 300px;
-        }
-
-        input {
-            width: 100%;
-            margin: 10px 0;
-            padding: 8px;
-            font-size: 16px;
-        }
-
-        button {
-            background-color: #D81B60;
-            color: white;
-            padding: 10px;
-            width: 100%;
-            font-size: 16px;
-            border: none;
-            cursor: pointer;
-        }
-
-        .toggle {
-            color: #D81B60;
-            margin-top: 10px;
-            cursor: pointer;
-            font-weight: bold;
-        }
-
-        .error {
-            color: red;
-            margin-top: 10px;
-        }
-
-        footer {
-            background-color: #000;
-            color: white;
-            padding: 10px;
-            font-size: 14px;
-        }
-    </style>
+  <meta charset="UTF-8" />
+  <title>Login - Mueblería Las Américas</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <style>
+    :root{ --brand:#d81b60; --brand2:#ad164d; --bg:#fff5f8; --text:#2b2b2b; }
+    *{ box-sizing:border-box }
+    body{ margin:0; font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif; color:var(--text);
+      background:radial-gradient(1200px 600px at 80% -10%, #ffd1e3 0, transparent 60%),
+                 radial-gradient(1000px 500px at -10% 20%, #ffe3ee 0, transparent 60%), var(--bg);}
+    header{ background:linear-gradient(90deg,var(--brand),var(--brand2)); color:#fff; padding:16px; text-align:center; font-weight:800; }
+    .wrap{ min-height:calc(100vh - 120px); display:grid; place-items:center; padding:20px; }
+    .card{ width:100%; max-width:520px; background:#fff; border-radius:16px; padding:24px; box-shadow:0 8px 24px rgba(0,0,0,.08);}
+    h2{ text-align:center; margin:6px 0 18px; }
+    input{ width:100%; padding:12px 14px; border-radius:8px; border:1px solid #ddd; font-size:15px; margin-bottom:14px; }
+    button{ width:100%; padding:12px 14px; border:none; border-radius:10px; background:var(--brand); color:#fff; font-weight:800; cursor:pointer; }
+    button:hover{ background:var(--brand2); }
+    .alt{ text-align:center; margin-top:12px; font-size:14px; }
+    .alt a{ color:var(--brand2); text-decoration:none; font-weight:700; cursor:pointer; }
+    .msg{ text-align:center; margin-top:10px; font-weight:600; min-height:20px; }
+    footer{ text-align:center; padding:16px; color:#444; font-size:13px; }
+  </style>
 </head>
 <body>
-    <header>Mueblería Las Américas</header>
+  <header>Mueblería Las Américas</header>
 
-    <div class="container">
-        <div class="form-box">
-            <h2 id="formTitle">Iniciar sesión</h2>
-            <input type="text" id="usuario" placeholder="Usuario">
-            <input type="password" id="contrasena" placeholder="Contraseña">
-            <button onclick="manejarLogin()">Iniciar sesión</button>
-            <p class="toggle" onclick="alternarModo()">¿No tienes cuenta? Regístrate</p>
-            <p id="mensaje" class="error"></p>
-        </div>
+  <main class="wrap">
+    <div class="card">
+      <h2>Iniciar sesión</h2>
+
+      <form id="loginForm" autocomplete="on">
+        <input type="email" id="email" placeholder="Usuario (correo)" required />
+        <input type="password" id="password" placeholder="Contraseña" required />
+        <button type="submit">Iniciar sesión</button>
+        <div class="alt">¿No tienes cuenta? <a id="registerLink">Regístrate</a></div>
+        <div id="msg" class="msg"></div>
+      </form>
     </div>
+  </main>
 
-    <footer>
-        © 2025 Mueblería Las Américas. Todos los derechos reservados.
-    </footer>
+  <footer>© 2025 Mueblería Las Américas. Todos los derechos reservados.</footer>
 
-    <script>
-        let modoRegistro = false;
-        let intentosFallidos = 0;
+  <!-- Supabase -->
+  <script type="module">
+    import { supabase } from "./supabase-config.js";
 
-        function alternarModo() {
-            modoRegistro = !modoRegistro;
-            document.getElementById("formTitle").textContent = modoRegistro ? "Registrarse" : "Iniciar sesión";
-            document.querySelector("button").textContent = modoRegistro ? "Registrarse" : "Iniciar sesión";
-            document.querySelector(".toggle").textContent = modoRegistro
-                ? "¿Ya tienes cuenta? Inicia sesión"
-                : "¿No tienes cuenta? Regístrate";
-            document.getElementById("mensaje").textContent = "";
-        }
+    const form = document.getElementById("loginForm");
+    const msg  = document.getElementById("msg");
+    const emailEl = document.getElementById("email");
+    const passEl  = document.getElementById("password");
 
-        function manejarLogin() {
-            const usuario = document.getElementById("usuario").value.trim();
-            const contrasena = document.getElementById("contrasena").value.trim();
+    // Si ya hay sesión, redirige según rol
+    (async ()=>{
+      const { data:{ session } } = await supabase.auth.getSession();
+      const email = session?.user?.email || sessionStorage.getItem("userEmail");
+      if (!email) return;
+      const { data: admin } = await supabase.from("admins").select("admins").eq("admins", email).maybeSingle();
+      location.href = admin ? "agregar.html" : "index.html";
+    })();
 
-            if (!usuario || !contrasena) {
-                document.getElementById("mensaje").textContent = "Por favor, completa todos los campos.";
-                return;
-            }
+    form.addEventListener("submit", async (e)=>{
+      e.preventDefault();
+      msg.textContent = "Ingresando...";
+      const email = emailEl.value.trim();
+      const password = passEl.value;
 
-            if (modoRegistro) {
-                // No se puede registrar como admin
-                if (usuario === "Flor_Campos") {
-                    document.getElementById("mensaje").textContent = "Este usuario está reservado para administración.";
-                    return;
-                }
-                localStorage.setItem("usuario", usuario);
-                localStorage.setItem("contrasena", contrasena);
-                localStorage.setItem("rol", "user");
-                document.getElementById("mensaje").textContent = "Registro exitoso. Ahora puedes iniciar sesión.";
-                alternarModo();
-            } else {
-                const esAdmin = usuario === "Flor_Campos" && contrasena === "243205";
-                const usuarioGuardado = localStorage.getItem("usuario");
-                const contrasenaGuardada = localStorage.getItem("contrasena");
+      const { data, error } = await supabase.auth.signInWithPassword({ email, password });
+      if (error){ msg.textContent = error.message; return; }
 
-                const esUsuarioValido = usuario === usuarioGuardado && contrasena === contrasenaGuardada;
+      sessionStorage.setItem("userEmail", data.user.email);
 
-                if (esAdmin || esUsuarioValido) {
-                    intentosFallidos = 0;
-                    localStorage.setItem("nombreUsuario", usuario);
-                    localStorage.setItem("rol", esAdmin ? "admin" : "user");
-                    window.location.href = "index.html";
-                } else {
-                    intentosFallidos++;
-                    if (intentosFallidos >= 3) {
-                        document.getElementById("mensaje").textContent = "Espere un momento que pasó el límite de veces.";
-                    } else {
-                        document.getElementById("mensaje").textContent = "Usuario o contraseña incorrectos.";
-                    }
-                }
-            }
-        }
-    </script>
+      // ¿Es admin?
+      const { data: admin } = await supabase.from("admins").select("admins").eq("admins", data.user.email).maybeSingle();
+      location.href = admin ? "agregar.html" : "index.html";
+    });
+
+    // Registro rápido (opcional)
+    document.getElementById("registerLink").addEventListener("click", async ()=>{
+      const email = prompt("Correo para registrar:");
+      if(!email) return;
+      const password = prompt("Contraseña (mín. 6 caracteres):");
+      if(!password) return;
+
+      msg.textContent = "Creando cuenta...";
+      const { data, error } = await supabase.auth.signUp({ email, password });
+      if (error){ msg.textContent = error.message; return; }
+
+      msg.textContent = "Cuenta creada. Revisa tu correo si te pide confirmación e inicia sesión.";
+      emailEl.value = email; passEl.value = "";
+    });
+  </script>
 </body>
 </html>
