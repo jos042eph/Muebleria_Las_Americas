@@ -1,93 +1,105 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <meta charset="UTF-8">
-    <title>Inventario - Mueblería Las Américas</title>
-    <link rel="stylesheet" href="style.css">
+  <meta charset="UTF-8" />
+  <title>Inventario - Mueblería Las Américas</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <style>
+    :root{ --brand:#d81b60; --brand2:#ad164d; --bg:#fff5f8; --text:#2b2b2b; }
+    *{ box-sizing:border-box }
+    body{ margin:0; font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif; color:var(--text);
+      background:radial-gradient(1200px 600px at 80% -10%, #ffd1e3 0, transparent 60%),
+                 radial-gradient(1000px 500px at -10% 20%, #ffe3ee 0, transparent 60%), var(--bg);}
+    header{ background:linear-gradient(90deg,var(--brand),var(--brand2)); color:#fff; padding:16px; text-align:center; font-weight:800; }
+    .wrap{ max-width:1100px; margin:20px auto; padding:0 16px; }
+    h2{ margin:8px 0 16px; }
+    .grid{ display:grid; gap:16px; grid-template-columns:repeat(4,minmax(0,1fr)); }
+    .card{ background:#fff; border-radius:16px; padding:14px; box-shadow:0 8px 24px rgba(0,0,0,.08); }
+    .card img{ width:100%; border-radius:12px; aspect-ratio:4/3; object-fit:cover; background:#f4f4f4; }
+    .card h3{ margin:10px 0 4px; font-size:18px; }
+    .muted{ opacity:.75; font-size:14px; margin:4px 0; }
+    video{ width:100%; border-radius:12px; margin-top:8px; }
+    .toolbar{ display:flex; gap:10px; align-items:center; justify-content:space-between; margin-bottom:10px; }
+    .toolbar input{ flex:1; padding:10px 12px; border-radius:10px; border:1px solid #ddd; }
+    .toolbar a{ background:#fff; color:var(--brand); text-decoration:none; font-weight:700; padding:8px 12px; border-radius:999px; border:1px solid #ffd3e5; }
+    @media (max-width:1024px){ .grid{ grid-template-columns:repeat(3,1fr);} }
+    @media (max-width:768px){ .grid{ grid-template-columns:repeat(2,1fr);} }
+    @media (max-width:500px){ .grid{ grid-template-columns:1fr;} }
+  </style>
 </head>
 <body>
-<header>
-    <h1>Mueblería Las Américas</h1>
-    <nav>
-        <ul>
-            <li><a href="index.html">Inicio</a></li>
-            <li><a href="catalogo.html">Catálogo</a></li>
-            <li><a href="empresa.html">Empresa</a></li>
-            <li><a href="login.html">Login</a></li>
-            <li><a href="categorias.html">Categorías</a></li>
-            <li><a href="inventario.html">Inventario</a></li>
-            <li><a href="agregar.html">Agregar Producto</a></li>
-        </ul>
-    </nav>
-</header>
-<main>
-    <h2>Inventario</h2>
-    <p>Aquí se podrá consultar el inventario de la tienda.</p>
-</main>
-<footer>
-    <p>&copy; 2025 Mueblería Las Américas</p>
-</footer>
-</body>
-    <script>
-  const esAdmin = localStorage.getItem("rol") === "admin";
+  <header>Mueblería Las Américas</header>
 
-  document.addEventListener("DOMContentLoaded", () => {
-    if (!esAdmin) {
-      const links = document.querySelectorAll("nav ul li");
-      links.forEach(li => {
-        const texto = li.textContent.trim().toLowerCase();
-        if (texto.includes("agregar producto") || texto.includes("inventario")) {
-          li.style.display = "none";
-        }
-      });
+  <main class="wrap">
+    <div class="toolbar">
+      <h2 style="margin:0">Inventario</h2>
+      <!-- Link de admin (solo se muestra si es admin) -->
+      <a id="adminLink" href="agregar.html" style="display:none">Administrar</a>
+    </div>
+
+    <input id="q" placeholder="Buscar por nombre..." />
+
+    <div id="grid" class="grid" style="margin-top:14px"></div>
+    <p id="msg" class="muted"></p>
+  </main>
+
+  <script type="module">
+    import { supabase } from "./supabase-config.js";
+
+    const grid = document.getElementById("grid");
+    const msg  = document.getElementById("msg");
+    const q    = document.getElementById("q");
+
+    // Mostrar botón Administrar si es admin
+    (async ()=>{
+      const { data:{ session } } = await supabase.auth.getSession();
+      const email = session?.user?.email || sessionStorage.getItem("userEmail");
+      if(!email) return;
+      const { data: admin } = await supabase.from("admins").select("admins").eq("admins", email).maybeSingle();
+      if (admin) document.getElementById("adminLink").style.display = "inline-flex";
+    })();
+
+    // Cargar productos
+    let productos = [];
+    await cargar();
+
+    // Filtro por nombre
+    q.addEventListener("input", ()=>pintar(filtrar(q.value)));
+
+    function filtrar(texto){
+      const t = texto.trim().toLowerCase();
+      if(!t) return productos;
+      return productos.filter(p => (p.name||"").toLowerCase().includes(t));
     }
-  });
-</script>
-</body>
-    <script>
-// Verificar si hay sesión activa
-document.addEventListener("DOMContentLoaded", function () {
-    const usuario = localStorage.getItem("usuario");
-    const rol = localStorage.getItem("rol");
 
-    // Mostrar nombre de usuario si existe
-    if (usuario) {
-        const header = document.querySelector("header") || document.body;
+    async function cargar(){
+      msg.textContent = "Cargando inventario...";
+      const { data, error } = await supabase
+        .from("products")
+        .select("id,name,price,stock,image_url,video_url,is_active,created_at")
+        .eq("is_active", true)
+        .order("created_at", { ascending:false });
 
-        const divUser = document.createElement("div");
-        divUser.id = "usuarioActivo";
-        divUser.style.marginLeft = "10px";
-        divUser.style.color = "white";
-        divUser.style.fontWeight = "bold";
-        divUser.style.display = "flex";
-        divUser.style.alignItems = "center";
-        divUser.innerHTML = `👤 ${usuario} 
-            <button id="cerrarSesion" style="margin-left: 10px; padding: 5px; font-size: 12px;">Cerrar sesión</button>`;
-
-        header.prepend(divUser);
-
-        // Cerrar sesión
-        document.getElementById("cerrarSesion").addEventListener("click", () => {
-            localStorage.removeItem("usuario");
-            localStorage.removeItem("rol");
-            window.location.href = "login.html";
-        });
-
-        // Ocultar Agregar Producto e Inventario si no es admin
-        if (rol !== "admin") {
-            const links = document.querySelectorAll("nav a");
-            links.forEach(link => {
-                const texto = link.textContent.toLowerCase();
-                if (texto.includes("agregar producto") || texto.includes("inventario")) {
-                    link.style.display = "none";
-                }
-            });
-        }
-    } else {
-        // Redirigir al login si no hay sesión (opcional)
-        // window.location.href = "login.html";
+      if(error){ msg.textContent = error.message; return; }
+      productos = data || [];
+      pintar(productos);
+      msg.textContent = productos.length ? "" : "No hay productos por ahora.";
     }
-});
-</script>
-</html>
+
+    function pintar(items){
+      grid.innerHTML = items.map(p => `
+        <article class="card">
+          <img src="${p.image_url ?? 'https://via.placeholder.com/600x400?text=Mueble'}" alt="${p.name}">
+          <h3>${p.name}</h3>
+          <div class="muted">₡${Number(p.price).toLocaleString('es-CR')}</div>
+          <div class="muted">Stock: ${p.stock}</div>
+          ${p.video_url ? `
+            <video controls preload="metadata">
+              <source src="${p.video_url}" type="video/mp4">
+            </video>` : ``}
+        </article>
+      `).join("");
+    }
+  </script>
+</body>
 </html>
