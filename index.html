@@ -26,6 +26,11 @@
     .grid{ max-width:1100px; margin:24px auto; padding:0 16px; display:grid; gap:16px; grid-template-columns:repeat(3,minmax(0,1fr)); }
     .card{ background:#fff; border-radius:16px; padding:16px; box-shadow:0 8px 24px rgba(0,0,0,.08); }
     .card h3{ margin:8px 0; }
+    .about{ max-width:1100px; margin:28px auto; padding:0 16px; }
+    .about .box{ background:#fff; border-radius:16px; padding:24px; box-shadow:0 8px 24px rgba(0,0,0,.08); text-align:center; }
+    .about h2{ color:#d81b60; margin:0 0 10px; }
+    .about p{ max-width:820px; margin:0 auto 12px; line-height:1.6; }
+    .about .btn{ display:inline-block; margin-top:8px; }
     footer{ text-align:center; padding:18px; color:#444; font-size:13px; }
     @media (max-width:900px){ .grid{ grid-template-columns:repeat(2,1fr);} }
     @media (max-width:560px){ .grid{ grid-template-columns:1fr;} }
@@ -40,6 +45,7 @@
         <a href="catalogo.html">Catálogo</a>
         <a href="categorias.html">Categorías</a>
         <a href="inventario.html">Inventario</a>
+        <a href="empresa.html">Empresa</a>
         <a id="adminLink" href="agregar.html" class="ghost" style="display:none">Administrar</a>
         <a id="loginLink" href="login.html" class="ghost">Login</a>
       </div>
@@ -71,6 +77,19 @@
       <p>Camas, clósets y burós con acabados duraderos y elegantes.</p>
       <a class="btn ghost" href="categorias.html">Explorar</a>
     </article>
+  </section>
+
+  <!-- Sección de la empresa -->
+  <section class="about">
+    <div class="box">
+      <h2>Nuestra Empresa</h2>
+      <p>
+        En <strong>Mueblería Las Américas</strong> ofrecemos muebles de alta calidad que combinan diseño y funcionalidad.
+        Con más de 15 años de experiencia, ayudamos a cientos de familias a crear espacios acogedores y elegantes.
+        Nuestra misión es brindarte productos duraderos y un servicio personalizado en cada compra.
+      </p>
+      <a class="btn" href="empresa.html">Conocer más</a>
+    </div>
   </section>
 
   <footer>© 2025 Mueblería Las Américas. Todos los derechos reservados.</footer>
