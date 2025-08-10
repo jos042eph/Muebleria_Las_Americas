@@ -50,6 +50,10 @@
     const msg  = document.getElementById("msg");
     const q    = document.getElementById("q");
 
+    // Lee ?cat= de la URL (id numérico de la categoría)
+    const params = new URLSearchParams(location.search);
+    const catId = params.get("cat"); // puede ser null
+
     // Mostrar botón Administrar si es admin
     (async ()=>{
       const { data:{ session } } = await supabase.auth.getSession();
@@ -63,7 +67,7 @@
     let productos = [];
     await cargar();
 
-    // Filtro por nombre
+    // Filtro por nombre (buscador)
     q.addEventListener("input", ()=>pintar(filtrar(q.value)));
 
     function filtrar(texto){
@@ -74,16 +78,23 @@
 
     async function cargar(){
       msg.textContent = "Cargando inventario...";
-      const { data, error } = await supabase
+
+      let query = supabase
         .from("products")
-        .select("id,name,price,stock,image_url,video_url,is_active,created_at")
+        .select("id,name,price,stock,image_url,video_url,is_active,created_at,category_id")
         .eq("is_active", true)
         .order("created_at", { ascending:false });
+
+      if (catId) query = query.eq("category_id", Number(catId));
+
+      const { data, error } = await query;
 
       if(error){ msg.textContent = error.message; return; }
       productos = data || [];
       pintar(productos);
-      msg.textContent = productos.length ? "" : "No hay productos por ahora.";
+      msg.textContent = productos.length
+        ? (catId ? "Mostrando productos de la categoría seleccionada." : "")
+        : "No hay productos por ahora.";
     }
 
     function pintar(items){
