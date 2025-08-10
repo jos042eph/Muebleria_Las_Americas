@@ -4,39 +4,34 @@
   <meta charset="UTF-8" />
   <title>Agregar nuevo producto</title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <!-- Estilos simples y responsive -->
+  <!-- Estilo consistente con el sitio -->
   <style>
     :root{ --brand:#d81b60; --brand2:#ad164d; --bg:#fff5f8; --text:#2b2b2b; }
     *{ box-sizing:border-box }
-    body{ margin:0; font-family:system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif; color:var(--text);
-      background: radial-gradient(1200px 600px at 80% -10%, #ffd1e3 0, transparent 60%),
-                  radial-gradient(1000px 500px at -10% 20%, #ffe3ee 0, transparent 60%), var(--bg); }
-    header{ position:sticky; top:0; background:linear-gradient(90deg,var(--brand),var(--brand2)); color:#fff; padding:14px 18px; }
+    body{ margin:0; font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif; color:var(--text);
+      background:radial-gradient(1200px 600px at 80% -10%, #ffd1e3 0, transparent 60%),
+                 radial-gradient(1000px 500px at -10% 20%, #ffe3ee 0, transparent 60%), var(--bg);}
+    header{ position:sticky; top:0; background:linear-gradient(90deg,var(--brand),var(--brand2)); color:#fff; padding:14px 18px; font-weight:900; }
     .wrap{ max-width:980px; margin:24px auto; padding:0 16px; }
-    h1{ margin:0; font-size:22px; }
     .card{ background:#fff; border-radius:16px; padding:18px; box-shadow:0 8px 24px rgba(0,0,0,.08); }
     .grid{ display:grid; grid-template-columns:1fr 1fr; gap:16px; }
     label{ display:block; font-weight:600; margin:8px 0 6px; }
-    input, textarea, select, button{
-      width:100%; padding:10px 12px; border-radius:10px; border:1px solid #ddd; font-size:14px;
-    }
+    input, textarea, select, button{ width:100%; padding:10px 12px; border-radius:10px; border:1px solid #ddd; font-size:14px; }
     textarea{ min-height:92px; resize:vertical; }
-    button{ background:var(--brand); border:none; color:#fff; font-weight:700; cursor:pointer; }
+    button{ background:var(--brand); border:none; color:#fff; font-weight:800; cursor:pointer; }
     button:hover{ background:var(--brand2); }
     .row{ display:flex; gap:12px; }
     .row > *{ flex:1; }
-    .media{ display:grid; gap:12px; }
-    .preview{ width:100%; border-radius:12px; aspect-ratio:4/3; object-fit:cover; background:#f7f7f7; }
+    .preview{ width:100%; border-radius:12px; aspect-ratio:4/3; object-fit:cover; background:#f4f4f4; }
     .note{ font-size:12px; opacity:.8; margin-top:4px; }
     @media (max-width:800px){ .grid{ grid-template-columns: 1fr; } }
   </style>
 </head>
 <body>
-  <header><h1>Panel — Agregar producto</h1></header>
+  <header>Panel — Agregar producto</header>
 
-  <div class="wrap">
+  <main class="wrap">
     <div class="card">
-      <!-- Formulario -->
       <form id="formProducto" autocomplete="off">
         <div class="grid">
           <div>
@@ -68,24 +63,22 @@
                   <input id="nuevaCat" placeholder="Ej. Sofás" />
                   <button type="button" id="btnAddCat" title="Crear">Crear</button>
                 </div>
-                <div class="note">Si necesitas una categoría nueva, créala y luego selecciónala.</div>
+                <div class="note">Crea la categoría y luego selecciónala.</div>
               </div>
             </div>
           </div>
 
-          <div class="media">
-            <div>
-              <label for="img">Imagen</label>
-              <input id="img" type="file" accept="image/*" />
-              <img id="imgPreview" class="preview" alt="Vista previa imagen" />
-            </div>
+          <div>
+            <label for="img">Imagen</label>
+            <input id="img" type="file" accept="image/*" />
+            <img id="imgPreview" class="preview" alt="Vista previa imagen" />
 
-            <div>
-              <label for="vid">Video (≥ 2 min)</label>
-              <input id="vid" type="file" accept="video/*" />
-              <video id="vidPreview" class="preview" controls preload="metadata"></video>
-              <div class="note">Formatos comunes: MP4, WebM.</div>
-            </div>
+            <div style="height:12px"></div>
+
+            <label for="vid">Video (≥ 2 min)</label>
+            <input id="vid" type="file" accept="video/*" />
+            <video id="vidPreview" class="preview" controls preload="metadata"></video>
+            <div class="note">Formatos: MP4/WebM. Se valida duración mínima.</div>
           </div>
         </div>
 
@@ -94,20 +87,19 @@
           <button type="button" id="btnSalir">Cerrar sesión</button>
         </div>
 
-        <p id="msg" style="margin-top:10px;font-weight:600"></p>
+        <p id="msg" style="margin-top:10px;font-weight:700"></p>
       </form>
     </div>
-  </div>
+  </main>
 
-  <!-- Importa el cliente desde tu archivo del repo -->
+  <!-- Supabase -->
   <script type="module">
     import { supabase } from "./supabase-config.js";
 
-    // --- Helpers UI ---
-    const $ = (id) => document.getElementById(id);
+    const $ = (id)=>document.getElementById(id);
     const msg = $("msg");
 
-    // Vista previa
+    // Previews
     $("img").addEventListener("change", (e)=>{
       const f = e.target.files[0];
       $("imgPreview").src = f ? URL.createObjectURL(f) : "";
@@ -117,21 +109,18 @@
       $("vidPreview").src = f ? URL.createObjectURL(f) : "";
     });
 
-    // --- Gate de admin + cargar categorías ---
-    (async () => {
-      // Debe existir sesión
+    // Gate admin + cargar categorías
+    (async ()=>{
       const { data:{ session } } = await supabase.auth.getSession();
       const email = session?.user?.email || sessionStorage.getItem("userEmail");
-      if (!email) { location.href = "login.html"; return; }
+      if(!email){ location.href="login.html"; return; }
 
-      // Verifica que esté en 'admins' (columna se llama 'admins' = email)
       const { data: admin } = await supabase
         .from("admins")
         .select("admins")
         .eq("admins", email)
         .maybeSingle();
-
-      if (!admin) { location.href = "index.html"; return; }
+      if(!admin){ location.href="index.html"; return; }
 
       await cargarCategorias();
     })();
@@ -142,21 +131,21 @@
         .from("categories")
         .select("id,name")
         .order("name");
-      if (error) { msg.textContent = error.message; return; }
+      if(error){ msg.textContent = error.message; return; }
       sel.innerHTML = (data||[]).map(c=>`<option value="${c.id}">${c.name}</option>`).join("");
     }
 
-    // Crear categoría rápida
+    // Crear categoría
     $("btnAddCat").addEventListener("click", async ()=>{
       const nombre = $("nuevaCat").value.trim();
-      if (!nombre) { msg.textContent = "Escribe el nombre de la categoría"; return; }
+      if(!nombre){ msg.textContent="Escribe el nombre de la categoría"; return; }
       msg.textContent = "Creando categoría...";
       const { data, error } = await supabase
         .from("categories")
         .insert({ name:nombre })
         .select("id,name")
         .single();
-      if (error) { msg.textContent = error.message; return; }
+      if(error){ msg.textContent = error.message; return; }
       $("nuevaCat").value = "";
       await cargarCategorias();
       $("category").value = data.id;
@@ -170,61 +159,9 @@
       location.href = "index.html";
     });
 
-    // --- Guardar producto ---
+    // Guardar producto
     $("formProducto").addEventListener("submit", async (e)=>{
       e.preventDefault();
       msg.textContent = "Subiendo...";
 
-      const name = $("name").value.trim();
-      const description = $("description").value.trim();
-      const price = Number($("price").value);
-      const stock = Number($("stock").value);
-      const category_id = $("category").value;
-
-      let image_url = null, video_url = null;
-
-      // Subir imagen (opcional)
-      const img = $("img").files[0];
-      if (img){
-        const path = `images/${crypto.randomUUID()}-${img.name}`;
-        const up = await supabase.storage.from("images").upload(path, img);
-        if (up.error){ msg.textContent = up.error.message; return; }
-        image_url = supabase.storage.from("images").getPublicUrl(path).data.publicUrl;
-      }
-
-      // Subir video (opcional, validando duración mínima 2m)
-      const vid = $("vid").files[0];
-      if (vid){
-        const ok = await duracionMinima(vid, 120);
-        if(!ok){ msg.textContent = "El video debe durar al menos 2 minutos."; return; }
-        const path = `videos/${crypto.randomUUID()}-${vid.name}`;
-        const up = await supabase.storage.from("videos").upload(path, vid);
-        if (up.error){ msg.textContent = up.error.message; return; }
-        video_url = supabase.storage.from("videos").getPublicUrl(path).data.publicUrl;
-      }
-
-      // Insertar producto
-      const { error } = await supabase.from("products").insert({
-        name, description, price, stock, category_id, image_url, video_url, is_active:true
-      });
-
-      if (error){ msg.textContent = error.message; return; }
-      msg.textContent = "Producto guardado ✔";
-      e.target.reset();
-      $("imgPreview").src = "";
-      $("vidPreview").src = "";
-    });
-
-    // Validar duración de video (en segundos)
-    function duracionMinima(file, minSec){
-      return new Promise((resolve)=>{
-        const url = URL.createObjectURL(file);
-        const v = document.createElement("video");
-        v.preload = "metadata";
-        v.onloadedmetadata = ()=>{ URL.revokeObjectURL(url); resolve((v.duration||0) >= minSec); };
-        v.src = url;
-      });
-    }
-  </script>
-</body>
-</html>
+      const name = $("name").
