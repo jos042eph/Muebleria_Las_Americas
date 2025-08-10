@@ -4,7 +4,6 @@
   <meta charset="UTF-8" />
   <title>Agregar nuevo producto</title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <!-- Estilo consistente con el sitio -->
   <style>
     :root{ --brand:#d81b60; --brand2:#ad164d; --bg:#fff5f8; --text:#2b2b2b; }
     *{ box-sizing:border-box }
@@ -12,18 +11,21 @@
       background:radial-gradient(1200px 600px at 80% -10%, #ffd1e3 0, transparent 60%),
                  radial-gradient(1000px 500px at -10% 20%, #ffe3ee 0, transparent 60%), var(--bg);}
     header{ position:sticky; top:0; background:linear-gradient(90deg,var(--brand),var(--brand2)); color:#fff; padding:14px 18px; font-weight:900; }
-    .wrap{ max-width:980px; margin:24px auto; padding:0 16px; }
+    .wrap{ max-width:1100px; margin:24px auto; padding:0 16px; }
     .card{ background:#fff; border-radius:16px; padding:18px; box-shadow:0 8px 24px rgba(0,0,0,.08); }
     .grid{ display:grid; grid-template-columns:1fr 1fr; gap:16px; }
     label{ display:block; font-weight:600; margin:8px 0 6px; }
     input, textarea, select, button{ width:100%; padding:10px 12px; border-radius:10px; border:1px solid #ddd; font-size:14px; }
     textarea{ min-height:92px; resize:vertical; }
-    button{ background:var(--brand); border:none; color:#fff; font-weight:800; cursor:pointer; }
-    button:hover{ background:var(--brand2); }
     .row{ display:flex; gap:12px; }
     .row > *{ flex:1; }
+    button{ background:var(--brand); border:none; color:#fff; font-weight:800; cursor:pointer; }
+    button:hover{ background:var(--brand2); }
     .preview{ width:100%; border-radius:12px; aspect-ratio:4/3; object-fit:cover; background:#f4f4f4; }
     .note{ font-size:12px; opacity:.8; margin-top:4px; }
+    .actions{ display:flex; gap:12px; margin-top:14px; }
+    .right video{ width:100%; border-radius:12px; background:#000; }
+    #msg{ margin-top:10px; font-weight:700; }
     @media (max-width:800px){ .grid{ grid-template-columns: 1fr; } }
   </style>
 </head>
@@ -34,12 +36,13 @@
     <div class="card">
       <form id="formProducto" autocomplete="off">
         <div class="grid">
-          <div>
+          <!-- Izquierda: datos -->
+          <div class="left">
             <label for="name">Nombre</label>
             <input id="name" required placeholder="Ej. Sillón 3 puestos" />
 
-            <label for="description">Descripción</label>
-            <textarea id="description" placeholder="Detalles del producto"></textarea>
+            <label for="description">Detalles del producto</label>
+            <textarea id="description" placeholder="Materiales, medidas, color..."></textarea>
 
             <div class="row">
               <div>
@@ -52,7 +55,11 @@
               </div>
             </div>
 
-            <div class="row">
+            <label for="img">Imagen</label>
+            <input id="img" type="file" accept="image/*" />
+            <img id="imgPreview" class="preview" alt="Vista previa imagen" />
+
+            <div class="row" style="margin-top:10px">
               <div>
                 <label for="category">Categoría</label>
                 <select id="category" required></select>
@@ -60,7 +67,7 @@
               <div>
                 <label for="nuevaCat">Nueva categoría (opcional)</label>
                 <div class="row">
-                  <input id="nuevaCat" placeholder="Ej. Sofás" />
+                  <input id="nuevaCat" placeholder="Ej. Ropero" />
                   <button type="button" id="btnAddCat" title="Crear">Crear</button>
                 </div>
                 <div class="note">Crea la categoría y luego selecciónala.</div>
@@ -68,26 +75,21 @@
             </div>
           </div>
 
-          <div>
-            <label for="img">Imagen</label>
-            <input id="img" type="file" accept="image/*" />
-            <img id="imgPreview" class="preview" alt="Vista previa imagen" />
-
-            <div style="height:12px"></div>
-
+          <!-- Derecha: video -->
+          <div class="right">
             <label for="vid">Video (≥ 2 min)</label>
             <input id="vid" type="file" accept="video/*" />
-            <video id="vidPreview" class="preview" controls preload="metadata"></video>
+            <video id="vidPreview" controls preload="metadata"></video>
             <div class="note">Formatos: MP4/WebM. Se valida duración mínima.</div>
           </div>
         </div>
 
-        <div style="margin-top:14px" class="row">
+        <div class="actions">
           <button type="submit">Guardar producto</button>
           <button type="button" id="btnSalir">Cerrar sesión</button>
         </div>
 
-        <p id="msg" style="margin-top:10px;font-weight:700"></p>
+        <p id="msg"></p>
       </form>
     </div>
   </main>
@@ -109,18 +111,34 @@
       $("vidPreview").src = f ? URL.createObjectURL(f) : "";
     });
 
-    // Gate admin + cargar categorías
+    // ------- Gate admin y cargar categorías (con mensajes) -------
     (async ()=>{
-      const { data:{ session } } = await supabase.auth.getSession();
-      const email = session?.user?.email || sessionStorage.getItem("userEmail");
-      if(!email){ location.href="login.html"; return; }
+      const { data:{ session }, error:sesErr } = await supabase.auth.getSession();
+      if (sesErr) console.error("getSession error:", sesErr);
 
-      const { data: admin } = await supabase
-        .from("admins")
-        .select("admins")
-        .eq("admins", email)
-        .maybeSingle();
-      if(!admin){ location.href="index.html"; return; }
+      const email = session?.user?.email || sessionStorage.getItem("userEmail");
+      if (!email){
+        msg.textContent = "No hay sesión activa. Inicia sesión.";
+        location.href = "login.html";
+        return;
+      }
+      msg.textContent = `Sesión: ${email}`;
+
+      const { data: admin, error:admErr } = await supabase
+        .from("admins").select("admins").eq("admins", email).maybeSingle();
+
+      if (admErr){
+        console.error("admins check error:", admErr);
+        alert("Error revisando permisos: " + admErr.message);
+        return;
+      }
+      if (!admin){
+        msg.textContent = `Sesión: ${email} (no es admin)`;
+        alert("Tu correo no tiene permisos. Agrega este email a la tabla 'admins'.");
+        location.href = "index.html";
+        return;
+      }
+      msg.textContent = `Sesión: ${email} (admin)`;
 
       await cargarCategorias();
     })();
@@ -128,28 +146,34 @@
     async function cargarCategorias(){
       const sel = $("category");
       const { data, error } = await supabase
-        .from("categories")
-        .select("id,name")
-        .order("name");
-      if(error){ msg.textContent = error.message; return; }
+        .from("categories").select("id,name").order("name");
+      if (error){ console.error(error); msg.textContent = error.message; return; }
       sel.innerHTML = (data||[]).map(c=>`<option value="${c.id}">${c.name}</option>`).join("");
     }
 
-    // Crear categoría
+    // Crear categoría (con mensajes claros)
     $("btnAddCat").addEventListener("click", async ()=>{
       const nombre = $("nuevaCat").value.trim();
-      if(!nombre){ msg.textContent="Escribe el nombre de la categoría"; return; }
+      if (!nombre){ msg.textContent = "Escribe el nombre de la categoría"; return; }
+
       msg.textContent = "Creando categoría...";
       const { data, error } = await supabase
         .from("categories")
         .insert({ name:nombre })
         .select("id,name")
         .single();
-      if(error){ msg.textContent = error.message; return; }
+
+      if (error){
+        console.error("Insert categoría error:", error);
+        alert("Error al crear categoría: " + (error.message || JSON.stringify(error)));
+        msg.textContent = "";
+        return;
+      }
+
       $("nuevaCat").value = "";
       await cargarCategorias();
       $("category").value = data.id;
-      msg.textContent = "Categoría creada ✔";
+      msg.textContent = `Categoría creada ✔ (${data.name})`;
     });
 
     // Cerrar sesión
@@ -159,9 +183,75 @@
       location.href = "index.html";
     });
 
-    // Guardar producto
+    // ------- Guardar producto -------
     $("formProducto").addEventListener("submit", async (e)=>{
       e.preventDefault();
       msg.textContent = "Subiendo...";
 
-      const name = $("name").
+      try{
+        const name = $("name").value.trim();
+        const description = $("description").value.trim();
+        const price = Number($("price").value);
+        const stock = Number($("stock").value);
+        const category_id = Number($("category").value);
+
+        if(!name || isNaN(price) || isNaN(stock) || !category_id){
+          msg.textContent = "Completa nombre, precio, stock y categoría.";
+          return;
+        }
+
+        // Subir imagen (opcional)
+        let image_url = null;
+        const img = $("img").files[0];
+        if (img){
+          const path = `images/${crypto.randomUUID()}-${img.name}`;
+          const up = await supabase.storage.from("images").upload(path, img);
+          if (up.error) throw up.error;
+          image_url = supabase.storage.from("images").getPublicUrl(path).data.publicUrl;
+        }
+
+        // Subir video (opcional + validar duración)
+        let video_url = null;
+        const vid = $("vid").files[0];
+        if (vid){
+          const ok = await duracionMinima(vid, 120); // 2 min
+          if(!ok){ msg.textContent = "El video debe durar al menos 2 minutos."; return; }
+          const path = `videos/${crypto.randomUUID()}-${vid.name}`;
+          const up = await supabase.storage.from("videos").upload(path, vid);
+          if (up.error) throw up.error;
+          video_url = supabase.storage.from("videos").getPublicUrl(path).data.publicUrl;
+        }
+
+        // Insertar producto
+        const { error } = await supabase.from("products").insert({
+          name, description, price, stock, category_id,
+          image_url, video_url, is_active:true
+        });
+        if (error) throw error;
+
+        msg.textContent = "Producto guardado ✔";
+        e.target.reset();
+        $("imgPreview").src = "";
+        $("vidPreview").src = "";
+      }catch(err){
+        console.error("Guardar producto error:", err);
+        alert("Error al guardar: " + (err.message || JSON.stringify(err)));
+        msg.textContent = "Ocurrió un error al guardar.";
+      }
+    });
+
+    function duracionMinima(file, minSec){
+      return new Promise((resolve)=>{
+        const url = URL.createObjectURL(file);
+        const v = document.createElement("video");
+        v.preload = "metadata";
+        v.onloadedmetadata = ()=>{
+          URL.revokeObjectURL(url);
+          resolve((v.duration || 0) >= minSec);
+        };
+        v.src = url;
+      });
+    }
+  </script>
+</body>
+</html>
