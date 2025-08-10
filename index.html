@@ -2,127 +2,103 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Inicio - Mueblería Las Américas</title>
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <title>Mueblería Las Américas</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
   <style>
-    body {
-      margin: 0;
-      font-family: Arial, sans-serif;
-      background-color: #ffe6f0;
-    }
-
-    header {
-      background-color: #d81b60;
-      color: white;
-      padding: 15px;
-      text-align: center;
-      font-size: 24px;
-      font-weight: bold;
-    }
-
-    nav {
-      background-color: #ffc1de;
-      display: flex;
-      flex-wrap: wrap;
-      justify-content: center;
-      gap: 20px;
-      padding: 10px;
-    }
-
-    nav a {
-      text-decoration: none;
-      color: #d81b60;
-      font-weight: bold;
-    }
-
-    #usuarioContainer {
-      position: absolute;
-      top: 10px;
-      left: 10px;
-      color: #d81b60;
-      font-weight: bold;
-      display: flex;
-      align-items: center;
-      gap: 5px;
-    }
-
-    #cerrarSesion {
-      margin-top: 5px;
-      background-color: #d81b60;
-      color: white;
-      border: none;
-      padding: 5px 10px;
-      cursor: pointer;
-      border-radius: 5px;
-    }
-
-    main {
-      text-align: center;
-      padding: 40px 20px;
-    }
-
-    footer {
-      background-color: #d81b60;
-      color: white;
-      text-align: center;
-      padding: 15px;
-      font-size: 14px;
-    }
-
-    @media screen and (max-width: 600px) {
-      nav {
-        flex-direction: column;
-        align-items: center;
-      }
-
-      #usuarioContainer {
-        position: static;
-        justify-content: center;
-        margin-bottom: 10px;
-      }
-    }
+    :root{ --brand:#d81b60; --brand2:#ad164d; --bg:#fff5f8; --text:#2b2b2b;}
+    *{ box-sizing:border-box }
+    body{ margin:0; font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif; color:var(--text);
+      background:radial-gradient(1200px 600px at 80% -10%, #ffd1e3 0, transparent 60%),
+                 radial-gradient(1000px 500px at -10% 20%, #ffe3ee 0, transparent 60%), var(--bg);}
+    header{ position:sticky; top:0; z-index:10; background:linear-gradient(90deg,var(--brand),var(--brand2)); color:#fff; }
+    .nav{ max-width:1100px; margin:0 auto; padding:12px 16px; display:flex; gap:10px; align-items:center; justify-content:space-between; flex-wrap:wrap;}
+    .brand{ font-weight:900; letter-spacing:.2px; }
+    .links{ display:flex; gap:12px; flex-wrap:wrap; }
+    .links a{ color:#fff; text-decoration:none; font-weight:700; padding:8px 10px; border-radius:999px; border:1px solid transparent; }
+    .links a.ghost{ background:#fff; color:var(--brand); border-color:#ffd3e5; }
+    .hero{ max-width:1100px; margin:32px auto; padding:0 16px; display:grid; gap:18px; text-align:center;}
+    .hero h1{ margin:6px 0; font-size:clamp(26px,4vw,40px); }
+    .hero p{ margin:0 auto; max-width:760px; opacity:.9; }
+    .cta{ display:flex; gap:10px; justify-content:center; flex-wrap:wrap; margin-top:10px; }
+    .btn{ background:var(--brand); color:#fff; text-decoration:none; padding:12px 16px; border-radius:12px; font-weight:800; }
+    .btn:hover{ background:var(--brand2); }
+    .btn.ghost{ background:#fff; color:var(--brand); border:1px solid #ffd3e5; }
+    .grid{ max-width:1100px; margin:24px auto; padding:0 16px; display:grid; gap:16px; grid-template-columns:repeat(3,minmax(0,1fr)); }
+    .card{ background:#fff; border-radius:16px; padding:16px; box-shadow:0 8px 24px rgba(0,0,0,.08); }
+    .card h3{ margin:8px 0; }
+    footer{ text-align:center; padding:18px; color:#444; font-size:13px; }
+    @media (max-width:900px){ .grid{ grid-template-columns:repeat(2,1fr);} }
+    @media (max-width:560px){ .grid{ grid-template-columns:1fr;} }
   </style>
 </head>
 <body>
+  <header>
+    <nav class="nav">
+      <div class="brand">Mueblería Las Américas</div>
+      <div class="links">
+        <a href="index.html">Inicio</a>
+        <a href="catalogo.html">Catálogo</a>
+        <a href="categorias.html">Categorías</a>
+        <a href="inventario.html">Inventario</a>
+        <a id="adminLink" href="agregar.html" class="ghost" style="display:none">Administrar</a>
+        <a id="loginLink" href="login.html" class="ghost">Login</a>
+      </div>
+    </nav>
+  </header>
 
-  <div id="usuarioContainer" style="display:none;">
-    <i class="fas fa-user"></i> <span id="nombreUsuario"></span>
-    <button id="cerrarSesion">Cerrar sesión</button>
-  </div>
+  <section class="hero">
+    <h1>¡Encuentra los mejores muebles para tu hogar!</h1>
+    <p>Explora nuestras categorías, compara precios y reserva tus productos favoritos. Calidad, buen gusto y entrega rápida.</p>
+    <div class="cta">
+      <a class="btn" href="catalogo.html">Ver catálogo</a>
+      <a class="btn ghost" href="inventario.html">Inventario disponible</a>
+    </div>
+  </section>
 
-  <header>Mueblería Las Américas</header>
+  <section class="grid">
+    <article class="card">
+      <h3>Sillones y Sofás</h3>
+      <p>Comodidad y estilo para tu sala. Modelos modernos y clásicos.</p>
+      <a class="btn ghost" href="categorias.html">Explorar</a>
+    </article>
+    <article class="card">
+      <h3>Comedores</h3>
+      <p>Mesas y sillas para compartir en familia. Madera, vidrio y más.</p>
+      <a class="btn ghost" href="categorias.html">Explorar</a>
+    </article>
+    <article class="card">
+      <h3>Habitación</h3>
+      <p>Camas, clósets y burós con acabados duraderos y elegantes.</p>
+      <a class="btn ghost" href="categorias.html">Explorar</a>
+    </article>
+  </section>
 
-  <nav>
-    <a href="index.html">Inicio</a>
-    <a href="catalogo.html">Catálogo</a>
-    <a href="empresa.html">Empresa</a>
-    <a href="login.html">Login</a>
-    <a href="categorias.html">Categorías</a>
-  </nav>
+  <footer>© 2025 Mueblería Las Américas. Todos los derechos reservados.</footer>
 
-  <main>
-    <h2>¡Encuentra los mejores muebles para tu hogar!</h2>
-    <p>Explorá nuestras categorías y apartá tus productos favoritos.</p>
-  </main>
+  <!-- Control de sesión/rol -->
+  <script type="module">
+    import { supabase } from "./supabase-config.js";
 
-  <footer>
-    © 2025 Mueblería Las Américas. Todos los derechos reservados.
-  </footer>
+    const adminLink = document.getElementById("adminLink");
+    const loginLink = document.getElementById("loginLink");
 
-  <script>
-    // Mostrar usuario si está logueado
-    const usuario = localStorage.getItem("usuario");
-    if (usuario) {
-      document.getElementById("usuarioContainer").style.display = "flex";
-      document.getElementById("nombreUsuario").textContent = usuario;
-    }
+    (async ()=>{
+      const { data:{ session } } = await supabase.auth.getSession();
+      const email = session?.user?.email || sessionStorage.getItem("userEmail");
+      if(!email) return;
 
-    // Cerrar sesión
-    document.getElementById("cerrarSesion").addEventListener("click", () => {
-      localStorage.removeItem("usuario");
-      window.location.href = "index.html";
-    });
+      // Si hay sesión, ocultar "Login"
+      loginLink.style.display = "none";
+
+      // Mostrar "Administrar" solo si es admin
+      const { data: admin } = await supabase
+        .from("admins")
+        .select("admins")
+        .eq("admins", email)
+        .maybeSingle();
+
+      if (admin) adminLink.style.display = "inline-flex";
+    })();
   </script>
 </body>
 </html>
